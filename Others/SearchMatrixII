@@ -1,0 +1,29 @@
+public class SolutionII {
+    //https://leetcode.com/problems/search-a-2d-matrix-ii/submissions/
+    public bool SearchMatrix(int[][] matrix, int target) {        
+        if (matrix == null || matrix.Length == 0 || matrix[0] == null || matrix[0].Length == 0) {
+            return false;
+        }
+
+        if (matrix[0][0] > target)
+            return false;
+        
+        int row = matrix.Length - 1;
+        int column = 0;
+
+        if (matrix[row][matrix[0].Length - 1] < target)
+            return false;
+
+        while (row >= 0 && column < matrix[0].Length)
+        {
+            if (matrix[row][column] == target)
+                return true;
+            else if (matrix[row][column] < target)
+                column++;
+            else
+                row--;
+        }
+
+        return false;
+    }
+}
