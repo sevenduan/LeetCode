@@ -29,9 +29,10 @@ public class SolutionMaxPathSum {
         int left = Math.Max(0, helper(root.left));
         int right = Math.Max(0, helper(root.right));
         
-        int sum = Math.Max(left, right) + root.val;
-        max = Math.Max(max, Math.Max(left + right + root.val, sum));
+        int sumSingle = Math.Max(left, right) + root.val; //sum
+        int sumBothSide = left + right + root.val; //sum left and right and root
+        max = Math.Max(max, Math.Max(sumSingle, sumBothSide));
         
-        return sum;
+        return sumSingle;
     }
 }
