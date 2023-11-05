@@ -1,0 +1,62 @@
+/*
+// Definition for a Node.
+public class Node {
+    public int val;
+    public Node next;
+    public Node random;
+    
+    public Node(int _val) {
+        val = _val;
+        next = null;
+        random = null;
+    }
+}
+*/
+
+public class Solution {
+    public Node CopyRandomList(Node head) {
+        if (head == null)
+            return head;
+        
+        CopyNext(head);
+        CopyRandom(head);
+        return SplitList(head);
+    }
+
+    private void CopyNext(Node head) {
+        // 1->2->3->4 to 1->1`->2->2`->3->3`->4->4`
+        while (head != null) {
+            var newNode = new Node(head.val);
+            newNode.random = head.random;
+            newNode.next = head.next;
+            head.next = newNode;
+            head = head.next.next;
+        }
+    }
+
+    private void CopyRandom(Node head) {
+        while (head != null) {
+            if (head.random != null) {
+                // copy random
+                head.next.random = head.random.next;
+            }
+            head = head.next.next;
+        }
+    }
+
+    private Node SplitList (Node head) {
+        // 1->1`->2->2`->3->3`->4->4` to 1->2->3->4
+        Node newHead = head.next;
+        while (head != null) {
+            var temp = head.next;
+            head.next = temp.next;
+            head = head.next;
+            
+            if (temp.next != null) {
+                temp.next = temp.next.next;
+            }
+        }
+
+        return newHead;
+    }
+}
