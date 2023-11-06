@@ -1,0 +1,16 @@
+public class Solution {
+    public int MaxProfit(int[] prices) {
+        int result = 0;
+        int buy = prices[0];
+
+        foreach (var price in prices) {
+            if (buy > price)
+                buy = price;
+
+            if (result < price - buy)
+                result = price - buy;
+        }
+
+        return result;
+    }
+}

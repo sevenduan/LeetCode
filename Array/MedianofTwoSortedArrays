@@ -1,0 +1,33 @@
+public class Solution {
+    public double FindMedianSortedArrays(int[] nums1, int[] nums2) {
+        int n = nums1.Length + nums2.Length;
+
+        if (n % 2 == 1) {
+            return FindKth(nums1, 0, nums2, 0, n / 2 + 1);
+        }
+
+        return (FindKth(nums1, 0, nums2, 0, n / 2 ) + FindKth(nums1, 0, nums2, 0, n / 2 + 1)) / 2.0;
+    }
+
+    private int FindKth(int[] A, int startOfA, int[] B, int startOfB, int k) {
+        if (startOfA >= A.Length) {
+            return B[startOfB + k - 1];
+        }
+        if (startOfB >= B.Length) {
+            return A[startOfA + k - 1];
+        }
+
+        if (k == 1) {
+            return Math.Min(A[startOfA], B[startOfB]);
+        }
+
+        int halfKthOfA = startOfA + k / 2 - 1 < A.Length ? A[startOfA + k / 2 - 1] : int.MaxValue;
+        int halfKthOfB = startOfB + k / 2 - 1 < B.Length ? B[startOfB + k / 2 - 1] : int.MaxValue; 
+
+        if (halfKthOfA < halfKthOfB) {
+            return FindKth(A, startOfA + k / 2, B, startOfB, k - k / 2);
+        } else {
+            return FindKth(A, startOfA, B, startOfB + k / 2, k - k / 2);
+        }
+    }
+}

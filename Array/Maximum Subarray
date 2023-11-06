@@ -1,0 +1,16 @@
+public class Solution {
+    public int MaxSubArray(int[] nums) {
+        if (nums == null || nums.Length == 0)
+            return 0;
+
+        int prefixSum = 0, minSum = 0, maxSum = int.MinValue;
+        
+        foreach (var num in nums) {
+            prefixSum += num;
+            maxSum = Math.Max(maxSum, prefixSum - minSum);
+            minSum = Math.Min(minSum, prefixSum);
+        }
+
+        return maxSum;
+    }
+}
