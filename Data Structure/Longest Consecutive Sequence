@@ -1,0 +1,32 @@
+public class Solution {
+    public int LongestConsecutive(int[] nums) {
+        if (nums == null || nums.Length == 0)
+            return 0;
+        
+        HashSet<int> set = new HashSet<int>();
+        foreach (var num in nums) {
+            set.Add(num);
+        }
+
+        int answer = 0;
+        foreach (var num in nums) {
+            if (set.Contains(num)) {
+                set.Remove(num);
+                int left = num - 1;
+                int right = num + 1;
+                while (set.Contains(left)) {
+                    set.Remove(left);
+                    left--;
+                }
+                while (set.Contains(right)) {
+                    set.Remove(right);
+                    right++;
+                }
+                int count = right - left - 1;
+                answer = Math.Max(answer, count);
+            }
+        }
+        
+        return answer;
+    }
+}

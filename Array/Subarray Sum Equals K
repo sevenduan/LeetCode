@@ -1,0 +1,32 @@
+public class Solution
+{
+    public int SubarraySum(int[] nums, int k)
+    {
+        if (nums == null || nums.Length == 0)
+            return 0;
+
+        int n = nums.Length;
+        Dictionary<int, int> map = new Dictionary<int, int>();
+        int answer = 0;
+        int prefixSum = 0;
+        map[0] = 1;
+
+        for (int i = 0; i < n; i++)
+        {
+            prefixSum += nums[i];
+            if (map.ContainsKey(prefixSum - k))
+                answer += map[prefixSum - k];
+
+            if (map.ContainsKey(prefixSum))
+            {
+                map[prefixSum]++;
+            }
+            else
+            {
+                map[prefixSum] = 1;
+            }
+        }
+
+        return answer;
+    }
+}

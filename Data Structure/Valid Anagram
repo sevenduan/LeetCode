@@ -1,0 +1,36 @@
+public class Solution {
+    public bool IsAnagram(string s, string t) {
+        if (s == null || t == null)
+            return false;
+        
+        if (s.Length != t.Length)
+        {
+            return false;
+        }
+
+        Dictionary<char, int> charCountS = CalculateChar(s);
+        Dictionary<char, int> charCountT = CalculateChar(t);
+
+        foreach (var kvp in charCountS) {
+            char c = kvp.Key;
+            int counts = kvp.Value;
+
+            if (!charCountT.ContainsKey(c) || charCountT[c] != counts)
+                return false;
+        }
+
+        return true;
+    }
+
+    private Dictionary<char, int> CalculateChar(string source) {
+        Dictionary<char, int> result = new Dictionary<char, int>();
+        foreach (char c in source) {
+            if (result.ContainsKey(c)) {
+                result[c]++;
+            } else {
+                result[c] = 1;
+            }
+        }
+        return result;
+    }
+}
