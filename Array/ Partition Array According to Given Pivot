@@ -1,0 +1,34 @@
+public class Solution {
+    public int[] PivotArray(int[] nums, int pivot) {
+        if (nums == null || nums.Length == 0)
+            return nums;
+            
+        int less = 0;
+        int n = nums.Length;
+        int equal = 0;
+
+        foreach (var num in nums) {
+            if (num < pivot)
+                less++;
+            else if (num == pivot)
+                equal++;
+        }
+
+        int[] result = new int[n];
+
+        int low = 0;
+        int en = less;
+        int high = less + equal;
+        
+        foreach (var num in nums) {
+            if (num < pivot)
+                result[low++] = num;
+            else if (num == pivot)
+                result[en++] = num;
+            else
+                result[high++] = num;
+        }
+
+        return result;
+    }
+}
