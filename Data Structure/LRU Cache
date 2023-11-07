@@ -1,0 +1,91 @@
+public class LRUCache
+{
+    private readonly int capacity;
+    private Dictionary<int, CacheNode> cache;
+    private CacheNode head, tail;
+    private int size;
+
+    private class CacheNode
+    {
+        public int Key { get; }
+        public int Value { get; }
+        public CacheNode Pre { get; set; }
+        public CacheNode Next { get; set; }
+
+        public CacheNode(int key, int value)
+        {
+            this.Key = key;
+            this.Value = value;
+        }
+    }
+
+    public LRUCache(int capacity)
+    {
+        this.capacity = capacity;
+        this.cache = new Dictionary<int, CacheNode>(capacity);
+        head = new CacheNode(0, -1);
+        tail = new CacheNode(-1, -1);
+        head.Next = tail;
+        tail.Pre = head;
+    }
+
+    public int Get(int key)
+    {
+        if (cache.ContainsKey(key))
+        {
+            var node = cache[key];
+            RemoveCurNode(node);
+            AddToTail(node);
+            return node.Value;
+        }
+
+        return -1;
+    }
+
+    public void Put(int key, int value)
+    {
+        if (cache.ContainsKey(key))
+        {
+            var node = cache[key];
+            RemoveCurNode(node);
+        }
+        else
+        {
+            if (size >= capacity)
+            {
+                int headKey = head.Next.Key;
+                cache.Remove(headKey);
+                RemoveCurNode(head.Next);
+            }
+        }
+
+        var newNode = new CacheNode(key, value);
+        cache[key] = newNode;
+        AddToTail(newNode);
+    }
+
+    private void RemoveCurNode(CacheNode node)
+    {
+        node.Pre.Next = node.Next;
+        node.Next.Pre = node.Pre;
+        size--;
+    }
+
+    private void AddToTail(CacheNode node)
+    {
+        CacheNode pre = tail.Pre;
+        pre.Next = node;
+        node.Pre = pre;
+
+        node.Next = tail;
+        tail.Pre = node;
+        size++;
+    }
+}
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache obj = new LRUCache(capacity);
+ * int param_1 = obj.Get(key);
+ * obj.Put(key,value);
+ */

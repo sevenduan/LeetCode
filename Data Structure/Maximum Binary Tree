@@ -1,0 +1,54 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left;
+ *     public TreeNode right;
+ *     public TreeNode(int val=0, TreeNode left=null, TreeNode right=null) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+public class Solution
+{
+    public TreeNode ConstructMaximumBinaryTree(int[] nums)
+    {
+        if (nums == null || nums.Length == 0)
+            return null;
+
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        int n = nums.Length;
+        TreeNode root = null;
+
+        for (int i = 0; i <= n; i++)
+        {
+            int current = (i == n) ? int.MaxValue : nums[i];
+            TreeNode right = new TreeNode(current);
+            while (stack.Count > 0 && current > stack.Peek().val)
+            {
+                var child = stack.Pop();
+                if (stack.Count == 0)
+                {
+                    right.left = child;
+                }
+                else
+                {
+                    var left = stack.Peek();
+                    if (left.val < right.val)
+                    {
+                        left.right = child;
+                    }
+                    else
+                    {
+                        right.left = child;
+                    }
+                }
+            }
+            stack.Push(right);
+        }
+
+        return stack.Peek().left;
+    }
+}
