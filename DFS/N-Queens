@@ -1,0 +1,59 @@
+public class Solution {
+    public IList<IList<string>> SolveNQueens(int n) {
+        List<IList<string>> results = new List<IList<string>>();
+        if (n < 0) {
+            return results;
+        }
+
+        Search(results, new List<int>(), n);
+
+        return results;
+    }
+
+    private void Search(IList<IList<string>> results, IList<int> cols, int n) {
+        if (cols.Count == n) {
+            results.Add(new List<string>(Draw(cols)));
+            return;
+        }
+
+        for (int colIndex = 0; colIndex < n; colIndex++) {
+            if (!IsValid(cols, colIndex)) {
+                continue;
+            }
+            cols.Add(colIndex);
+            Search(results, cols, n);
+            cols.RemoveAt(cols.Count - 1);
+        }
+    }
+
+    private bool IsValid(IList<int> cols, int column) {
+        int row = cols.Count;
+        for (int rowIndex = 0; rowIndex < row; rowIndex++) {
+            // not same column
+            if (cols[rowIndex] == column) {
+                return false;
+            }
+
+            // not cross side
+            if (rowIndex + cols[rowIndex] == row + column) {
+                return false;
+            }
+            if (rowIndex - cols[rowIndex] == row - column) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private IList<string> Draw(IList<int> cols) {
+        List<string> chessboard = new List<string>();
+        for (int i = 0; i < cols.Count; i++) {
+            StringBuilder sb = new StringBuilder();
+            for (int j = 0; j < cols.Count; j++) {
+                sb.Append(j == cols[i] ? 'Q' : '.');
+            }
+            chessboard.Add(sb.ToString());
+        }
+        return chessboard;
+    }
+}

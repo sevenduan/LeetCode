@@ -1,0 +1,70 @@
+public class Solution {
+    public IList<IList<string>> Partition(string s) {
+        List<IList<string>> results = new List<IList<string>>();
+        if (string.IsNullOrEmpty(s))
+            return results;
+
+        bool[,] isPalindrome = GetPalindrome(s);
+        Helper(s, 0, new List<int>(), isPalindrome, results);
+        
+        return results;
+    }
+
+    private void Helper(string s, int startIndex, IList<int> partition, bool[,] isPalindrome, IList<IList<string>> results) {
+        if (startIndex == s.Length) {
+            AddResult(s, partition, results);
+            return;
+        }
+
+        for (int i = startIndex; i < s.Length; i++) {
+            if (!isPalindrome[startIndex, i]) {
+                continue;
+            }
+            partition.Add(i);
+            Helper(s, i + 1, partition, isPalindrome, results);
+            partition.RemoveAt(partition.Count - 1);
+        }
+    }
+
+    private void AddResult(string s, IList<int> partition, IList<IList<string>> results) {
+        List<string> result = new List<string>();
+        int startIndex = 0;
+        for (int i = 0; i < partition.Count; i++) {
+            result.Add(s.Substring(startIndex, partition[i] - startIndex + 1));
+            startIndex = partition[i] + 1;
+        }
+        results.Add(new List<string>(result));
+    }
+
+    private bool[,] GetPalindrome(string s)
+    {
+        int n = s.Length;
+        bool[,] isPalindrome = new bool[n, n];
+
+        for (int i = 0; i < n; i++)
+        {
+            isPalindrome[i, i] = true;
+        }
+
+        for (int i = 0; i < n - 1; i++)
+        {
+            if (s[i] == s[i + 1])
+                isPalindrome[i, i + 1] = true;
+            else
+                isPalindrome[i, i + 1] = false;
+        }
+
+        for (int length = 2; length < n; length++)
+        {
+            for (int start = 0; start + length < n; start++)
+            {
+                if (s[start] == s[start + length] && isPalindrome[start + 1, start + length - 1])
+                    isPalindrome[start, start + length] = true;
+                else
+                    isPalindrome[start, start + length] = false;
+            }
+        }
+
+        return isPalindrome;
+    }
+}

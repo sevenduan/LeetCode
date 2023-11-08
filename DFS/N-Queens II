@@ -1,0 +1,46 @@
+public class Solution {
+    public int TotalNQueens(int n) {
+        if (n < 0) {
+            return 0;
+        }
+
+        return Search(new List<int>(), n);
+    }
+    
+    private int Search(IList<int> cols, int n) {
+        if (cols.Count == n) {
+            return 1;
+        }
+
+        int sum = 0;
+        for (int colIndex = 0; colIndex < n; colIndex++) {
+            if (!IsValid(cols, colIndex)) {
+                continue;
+            }
+            cols.Add(colIndex);
+            sum += Search(cols, n);
+            cols.RemoveAt(cols.Count - 1);
+        }
+
+        return sum;
+    }
+
+    private bool IsValid(IList<int> cols, int column) {
+        int row = cols.Count;
+        for (int rowIndex = 0; rowIndex < row; rowIndex++) {
+            // not same column
+            if (cols[rowIndex] == column) {
+                return false;
+            }
+
+            // not cross side
+            if (rowIndex + cols[rowIndex] == row + column) {
+                return false;
+            }
+            if (rowIndex - cols[rowIndex] == row - column) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
