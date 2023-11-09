@@ -1,0 +1,106 @@
+public class Solution {
+    public int LadderLength(string beginWord, string endWord, IList<string> wordList) {
+        if (beginWord == endWord)
+            return 1;
+
+        if (wordList.Count == 0)
+            return 0;
+
+        if (!wordList.Contains(endWord))
+            return 0;
+
+        if (!wordList.Contains(beginWord))
+            wordList.Add(beginWord);
+
+        HashSet<string> dicts = new HashSet<string>(wordList);
+        //BFS:
+        HashSet<string> hash1 = new HashSet<string>();
+        Queue<string> queue1 = new Queue<string>();
+        queue1.Enqueue(beginWord);
+        hash1.Add(beginWord);
+
+        HashSet<string> hash2 = new HashSet<string>();
+        Queue<string> queue2 = new Queue<string>();
+        queue2.Enqueue(endWord);
+        hash2.Add(endWord);
+
+        int length = 1;
+        while (queue1.Count > 0 || queue2.Count > 0) {
+            if (queue1.Count <= queue2.Count) {
+
+                if (queue1.Count > 0) {
+                    length++;
+                    if (ExtendQueue(queue1, hash1, hash2, dicts))
+                        return length;
+                }
+
+                if (queue2.Count > 0) {
+                    length++;
+                    if (ExtendQueue(queue2, hash2, hash1, dicts))
+                        return length;
+                }
+            } else {
+
+                if (queue2.Count > 0) {
+                    length++;
+                    if (ExtendQueue(queue2, hash2, hash1, dicts))
+                        return length;
+                }
+                if (queue1.Count > 0) {
+                    length++;
+                    if (ExtendQueue(queue1, hash1, hash2, dicts))
+                        return length;
+                }
+            }
+
+        }
+        
+        return 0;
+    }
+
+    private bool ExtendQueue(Queue<string> queue, HashSet<string> visited, HashSet<string> oppositeVisited, HashSet<string> dicts) {
+        int size = queue.Count;
+        for (int i = 0; i < size; i++) {
+            var current = queue.Dequeue();
+            var words = GetNextWords(current, dicts);
+            foreach (var word in words) {
+                if (visited.Contains(word))
+                   continue;
+                
+                if (oppositeVisited.Contains(word))
+                    return true;
+
+                queue.Enqueue(word);
+                visited.Add(word);
+            }
+        }
+
+        return false;               
+    }
+
+    private IList<string> GetNextWords (string word, HashSet<string> dicts) {
+        List<string> newWords = new List<string>();
+        for (int i = 0; i < word.Length; i++) {
+            var prefix = word.Substring(0, i);
+            var suffix = word.Substring(i + 1, word.Length - i - 1);
+            char[] chars = ("abcdefghijklmnopqrstuvwxyz").ToCharArray();
+            for (int j = 0; j < 26; j++) {
+                if (word[i] == chars[j]) {
+                    continue;
+                }
+                string nextWord = prefix + chars[j] + suffix;
+                if (dicts.Contains(nextWord)) {
+                    newWords.Add(nextWord);
+                }    
+            }
+        }
+        return newWords;
+    }
+
+    private string Replace(string s, int index, char c) {
+        char[] chars = s.ToCharArray();
+        chars[index] = c;
+        return new string(chars);
+    }
+    
+}

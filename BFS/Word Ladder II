@@ -1,0 +1,97 @@
+public class Solution {
+    public IList<IList<string>> FindLadders(string beginWord, string endWord, IList<string> wordList) {
+        List<IList<string>> ladders = new List<IList<string>>();
+        List<string> path = new List<string>();
+        if (beginWord == endWord) {
+            path.Add(beginWord);
+            ladders.Add(new List<string>(path));
+            return ladders;
+        }
+
+        if (wordList.Count == 0)
+            return ladders;
+
+        HashSet<string> dicts = new HashSet<string>(wordList);
+        Dictionary<string, int> visited = new Dictionary<string, int>();
+        Dictionary<string, IList<string>> map = new Dictionary<string, IList<string>>();
+
+        if (!dicts.Contains(endWord))
+            return ladders;
+
+        if (!dicts.Contains(beginWord))
+            dicts.Add(beginWord);
+
+        Bfs(map, visited, beginWord, endWord, dicts);
+
+        var words = GetNextWords(endWord, dicts);
+        map[endWord] = words;
+        Dfs(ladders, path, visited, map, endWord, beginWord, dicts);
+
+        return ladders;
+    }
+    
+    private void Dfs(List<IList<string>> ladders, IList<string> path, Dictionary<string, int> visited, Dictionary<string, IList<string>> map,  string start, string end, HashSet<string> dicts) {
+        path.Add(start);
+        if (start == end) {
+            ladders.Add(new List<string>(path.Reverse()));
+        } else {
+            foreach (var next in map[start]) {
+                if (visited.ContainsKey(next) && visited[start] == visited[next] + 1) { 
+                    Dfs(ladders, path, visited, map, next, end, dicts);
+                }
+            }           
+        }
+        path.RemoveAt(path.Count - 1);
+    }
+
+
+    private void Bfs(Dictionary<string, IList<string>> map, Dictionary<string, int> visited, string beginWord, string endWord, HashSet<string> dicts) {
+        Queue<string> queue = new Queue<string>();
+        queue.Enqueue(beginWord);
+        visited[beginWord] = 0;
+        bool exit = false;
+        int length = 0;
+        while (queue.Count > 0) {
+            if (exit)
+                return;
+            length++;
+            int size = queue.Count;
+            for (int i = 0; i < size; i++) {
+                var current = queue.Dequeue();
+                IList<string> words = GetNextWords(current, dicts);
+                map[current] = words;
+
+                foreach (var word in words) {
+                    if (visited.ContainsKey(word))
+                        continue;
+
+                    if (word == endWord) {
+                        exit = true;   
+                    }            
+
+                    queue.Enqueue(word);
+                    visited[word] = length;
+                }
+            }
+        }
+    }
+
+    private IList<string> GetNextWords (string word, HashSet<string> dicts) {
+        List<string> newWords = new List<string>();
+        for (int i = 0; i < word.Length; i++) {
+            var prefix = word.Substring(0, i);
+            var suffix = word.Substring(i + 1, word.Length - i - 1);
+            char[] chars = ("abcdefghijklmnopqrstuvwxyz").ToCharArray();
+            for (int j = 0; j < 26; j++) {
+                if (word[i] == chars[j]) {
+                    continue;
+                }
+                string nextWord = prefix + chars[j] + suffix;
+                if (dicts.Contains(nextWord)) {
+                    newWords.Add(nextWord);
+                }    
+            }
+        }
+        return newWords;
+    }
+}
