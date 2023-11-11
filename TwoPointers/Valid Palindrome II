@@ -1,0 +1,34 @@
+public class Solution {
+
+    public bool ValidPalindrome(string s) {
+        if (s == null || s.Length == null)
+            return false;
+
+        int left = 0; 
+        int right = s.Length - 1;
+
+        var pair = FindDifferences(s, left, right);
+
+        if (pair.Left >= pair.Right )
+            return true;
+        
+        return IsValidPalindrome(s, pair.Left + 1, pair.Right) || IsValidPalindrome (s, pair.Left, pair.Right - 1);
+    }
+
+    private (int Left, int Right) FindDifferences(string s, int left, int right) {
+        while (left < right) {
+            if (s[left] != s[right])
+                break;
+            
+            left++;
+            right--;
+        }
+
+        return (left, right);
+    }
+
+    private bool IsValidPalindrome(string s, int left, int right) {
+        var diff = FindDifferences(s, left, right);
+        return diff.Left >= diff.Right;
+    }
+}
