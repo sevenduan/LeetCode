@@ -1,0 +1,40 @@
+// https://leetcode.com/problems/letter-combinations-of-a-phone-number
+public class Solution {
+    public IList<string> LetterCombinations(string digits) {
+        List<string> result = new List<string>();
+        if (digits == null || digits.Length == 0) 
+            return result;
+
+        Dictionary<char, char[]> map = new Dictionary<char, char[]>();   
+        map['2'] = new char[] {'a', 'b', 'c'};
+        map['3'] = new char[] {'d', 'e', 'f'};
+        map['4'] = new char[] {'g', 'h', 'i'};
+        map['5'] = new char[] {'j', 'k', 'l'};
+        map['6'] = new char[] {'m', 'n', 'o'};
+        map['7'] = new char[] {'p', 'q', 'r', 's'};
+        map['8'] = new char[] {'t', 'u', 'v'};
+        map['9'] = new char[] {'w', 'x', 'y', 'z'};
+
+        StringBuilder sb = new StringBuilder();
+        Helper(map, digits, sb, result, 0);
+        return result;
+    }
+
+    private void Helper(Dictionary<char, char[]> map, string digits, StringBuilder sb, IList<string> result, int pos) {
+        if (pos == digits.Length) {
+            result.Add(sb.ToString());
+            return;
+        }
+
+        char c = digits[pos];
+        if (!map.ContainsKey(c)){
+            Helper(map, digits, sb, result, pos + 1);
+        }
+
+        foreach (char letter in map[c]) {
+            sb.Append(letter);
+            Helper(map, digits, sb, result, pos + 1);
+            sb.Length--;
+        }
+    }
+}
