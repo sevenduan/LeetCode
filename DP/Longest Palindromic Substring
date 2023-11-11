@@ -1,0 +1,39 @@
+public class Solution {
+    public string LongestPalindrome(string s) {
+        if (s == null || s.Length == 0) {
+            return "";
+        }
+                
+        int n = s.Length;
+        bool[,] isPalindrome = new bool[n, n];
+
+        //dp init
+        int longest = 1, start = 0;
+        for (int i = 0; i < n; i++) {
+            isPalindrome[i, i] = true;
+        }
+        
+        // Check for palindromes of length 2
+        for (int i = 0; i < n - 1; i++) {
+            isPalindrome[i, i + 1] = s[i] == s[i + 1];
+            if (isPalindrome[i, i + 1]) {
+                start = i;
+                longest = 2;
+            }
+        }
+
+        // Check for palindromes of length 3 or more using dynamic programming
+        for (int i = n - 1; i >= 0; i--) {
+            for (int j = i + 2; j < n; j++) {
+                isPalindrome[i, j] = isPalindrome[i + 1, j - 1] && (s[i] == s[j]);
+                    
+                if (isPalindrome[i, j] && j - i + 1 > longest) {
+                    start = i;
+                    longest = j - i + 1;
+                }
+            }
+        }
+        
+        return s.Substring(start, longest); 
+    }
+}
