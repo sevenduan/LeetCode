@@ -1,3 +1,4 @@
+//https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/
 public class SolutionStrStr {
     public int StrStr(string haystack, string needle) {
         if (haystack == null || needle == null)

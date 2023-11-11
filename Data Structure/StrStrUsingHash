@@ -1,0 +1,44 @@
+//https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/
+public class Solution {
+    public int StrStr(string haystack, string needle) {
+        if (haystack == null || needle == null)
+            return -1;
+        
+        int m = haystack.Length;
+        int n = needle.Length;
+        if (m < n)
+            return -1;
+        
+        int targetHash = GetHashCode(needle, 0, n);
+
+        int sourceHash = 0;
+        for (int i = 0; i < m - n + 1; i++) {
+            sourceHash = GetHashCode(haystack, i, i + n);
+
+            if (sourceHash == targetHash) {
+                // check string 
+                int k;
+                for (k = 0; k < n; k++) {
+                    if (haystack[i + k] != needle[k])
+                        break;
+                }
+
+                if (k == n)
+                    return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private int GetHashCode(string word, int start, int end) {
+        int hash = 0;
+        int prime = 31;
+        int baseValue = 10000;
+        for (int i = start; i < end; i++) {
+            hash = (hash * prime + word[i]) % baseValue;
+        }
+
+        return hash;
+    }
+}
