@@ -1,0 +1,81 @@
+public class Solution {
+    public IList<string> FindWords(char[][] board, string[] words) {    
+        HashSet<string> results = new HashSet<string>();    
+        if (board == null || board.Length == 0)
+            return new List<string>(results);
+        
+        if (board[0] == null || board[0].Length == 0)
+            return new List<string>(results);
+
+        int row = board.Length;
+        int column = board[0].Length;        
+        Dictionary<string, bool> prefixIsWord = GetPrefixSet(words);
+        bool[,] visited = new bool[row, column];
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                string letter = board[i][j].ToString();
+
+                if (prefixIsWord.ContainsKey(letter)) {
+                    sb.Append(letter);
+                    visited[i, j] = true;
+                    DFS(board, words, i, j, visited, sb, results, prefixIsWord);
+                    sb.Length--;
+                    visited[i, j] = false;
+                }
+            }
+        }
+
+        return new List<string>(results);
+    }
+
+    private void DFS(char[][] board, string[] words, int x, int y, bool[,] visited, StringBuilder sb, HashSet<string> results, Dictionary<string, bool> prefixIsWord) {
+        if (prefixIsWord[sb.ToString()]) {
+            results.Add(sb.ToString());
+        }
+
+        int[] dx = new int[4] {0, 0, 1, -1};
+        int[] dy = new int[4] {1, -1, 0, 0};
+
+        for (int i = 0; i < 4; i++) {
+            int newX = x + dx[i];
+            int newY = y + dy[i];
+
+            if (IsValid(board, words, newX, newY, visited, sb, prefixIsWord)) {
+                if (visited[newX, newY])
+                    continue;
+                    
+                sb.Append(board[newX][newY].ToString());
+                visited[newX, newY] = true;
+                DFS(board, words, newX, newY, visited, sb, results, prefixIsWord);
+                visited[newX, newY] = false;
+                sb.Length--;
+            }
+        }
+    }
+
+    private bool IsValid(char[][] board, string[] words, int x, int y, bool[,] visited, StringBuilder sb, Dictionary<string, bool> prefixIsWord) {
+        if (x < 0 || x >= board.Length || y < 0 || y >= board[0].Length)
+            return false;
+
+        return prefixIsWord.ContainsKey(sb.ToString() + board[x][y].ToString());
+    }
+
+    private Dictionary<string, bool> GetPrefixSet(string[] words) {
+        Dictionary<string, bool> prefixIsWord = new Dictionary<string, bool>();
+
+        foreach (var word in words) {
+            for (int i = 0; i < word.Length - 1; i++) {
+                string prefix = word.Substring(0, i + 1);
+                if (!prefixIsWord.ContainsKey(prefix)) {
+                    prefixIsWord[prefix] = false;
+                }
+            }
+
+            prefixIsWord[word] = true;
+        }
+
+        return prefixIsWord;
+    }
+}

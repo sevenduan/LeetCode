@@ -1,0 +1,70 @@
+public class Solution {
+    public bool Exist(char[][] board, string word) {
+        if (board == null || board.Length == 0)
+            return false;
+        
+        if (board[0] == null || board[0].Length == 0)
+            return false;
+        
+        if (word == null || word.Length == 0)
+            return false;
+        
+        int row = board.Length;
+        int column = board[0].Length;
+
+        bool[,] visited = new bool[row, column];
+        List<char> list = new List<char>();
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                char letter = board[i][j];
+                if (letter == word[0]) {
+                    list.Add(letter);
+                    visited[i, j] = true;
+                    if (DFS(board, word, list, visited, i, j))
+                        return true;
+
+                    list.RemoveAt(list.Count - 1);
+                    visited[i, j] = false;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private bool DFS(char[][] board, string word, IList<char> list, bool[,] visited, int x, int y) {
+        if (list.Count == word.Length)
+            return true;
+        
+        int[] dx = new int[4] {0, 0, 1, -1};
+        int[] dy = new int[4] {1, -1, 0, 0};
+
+        for (int i = 0; i < 4; i++) {
+            int newX = x + dx[i];
+            int newY = y + dy[i];
+
+            if (IsValid(board, word, list, visited, newX, newY)) {
+                if (visited[newX, newY])
+                    continue;
+                    
+                list.Add(board[newX][newY]);
+                visited[newX, newY] = true;
+                if (DFS(board, word, list, visited, newX, newY))
+                    return true;
+                    
+                list.RemoveAt(list.Count - 1);
+                visited[newX, newY] = false;
+            }
+        }
+
+        return false;
+    }
+    
+    private bool IsValid(char[][] board, string word, IList<char> list, bool[,] visited, int x, int y) {
+        if (x < 0 || x >= board.Length || y < 0 || y >= board[0].Length)
+            return false;
+
+        return board[x][y] == word[list.Count];             
+    }
+}
