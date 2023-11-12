@@ -1,0 +1,25 @@
+public class TwoSum {
+
+    private Dictionary<int, int> map;
+    
+    public TwoSum() {
+        map = new Dictionary<int, int>();
+    }
+    public void Add(int number) {
+        map[number] = map.GetValueOrDefault(number, 0) + 1;
+    }
+
+    public bool Find(int number) {
+        foreach (var num1 in map.Keys) {
+            int num2 = number - num1;
+
+            int num2Cnt = num1 == num2 ? 2 : 1;
+
+            if (map.GetValueOrDefault(num2, 0) >= num2Cnt)
+                return true;
+
+        }
+
+        return false;
+    }
+}

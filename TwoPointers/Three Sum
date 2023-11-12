@@ -1,0 +1,49 @@
+public class Solution {
+    public IList<IList<int>> ThreeSum(int[] nums) {
+        List<IList<int>> results = new List<IList<int>>();
+
+        if (nums == null || nums.Length <= 2)
+            return results;
+        
+        Array.Sort(nums);
+
+        for (int i = 0; i < nums.Length; i++) {
+            if (i > 0 && nums[i] == nums[i - 1])
+                continue;
+            
+            int left = i + 1;
+            int right = nums.Length - 1;
+            int target = 0 - nums[i];
+
+            TwoSum(nums, target, left, right, results);
+        }
+
+        return results;
+    }
+
+    private void TwoSum(int[] nums, int target, int left, int right, IList<IList<int>> results) {
+        while (left < right) {
+            int sum = nums[left] + nums[right];
+            if (sum == target) {
+                GenerateTriplet(nums, target, left, right, results);
+                left++;
+                right--;
+                while (left < right && nums[left] == nums[left - 1])
+                    left++;
+                while (left < right && nums[right] == nums[right + 1])
+                    right--;
+            } else if (sum > target)
+                right--;
+            else
+                left++;
+        }
+    }
+
+    private void GenerateTriplet(int[] nums, int target, int left, int right, IList<IList<int>> results) {
+        List<int> triplet = new List<int>();
+        triplet.Add(-target);
+        triplet.Add(nums[left]);
+        triplet.Add(nums[right]);
+        results.Add(new List<int>(triplet));
+    }
+}
