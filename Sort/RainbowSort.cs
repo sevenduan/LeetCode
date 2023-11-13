@@ -24,7 +24,7 @@ public class SolutionRainbowSort {
             while (left <= right && nums[left] <= colorMid) {
                 left++;
             }
-            while (left <= right && nums[right] >= colorMid) {
+            while (left <= right && nums[right] > colorMid) {
                 right--;
             }
 
