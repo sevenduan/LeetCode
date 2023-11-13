@@ -1,0 +1,25 @@
+public class Solution {
+    public void MoveZeroes(int[] nums) {
+        if (nums == null || nums.Length == 0)
+            return;
+        
+        int fillPointer = 0;
+        int movePointer = 0;
+
+        while (movePointer < nums.Length) {
+            if (nums[movePointer] != 0) {
+                if (fillPointer != movePointer) {
+                    nums[fillPointer] = nums[movePointer];
+                }
+                fillPointer++;
+            }
+            movePointer++;
+        }
+
+        while (fillPointer < nums.Length) {
+            if (nums[fillPointer] != 0)
+                nums[fillPointer] = 0;
+            fillPointer++;
+        }
+    }
+}
