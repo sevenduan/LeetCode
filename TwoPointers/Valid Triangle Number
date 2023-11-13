@@ -1,0 +1,33 @@
+// https://leetcode.com/problems/valid-triangle-number/
+public class Solution {
+    public int TriangleNumber(int[] nums) {
+        if (nums == null || nums.Length < 3)
+            return 0;
+        
+        Array.Sort(nums);
+        int count = 0;
+        for (int i = 2; i < nums.Length; i++) {
+            count += GetValidTriangle(nums, i);
+        }
+        
+        return count;
+    }
+
+    private int GetValidTriangle(int[] nums, int i) {
+        int left = 0;
+        int right = i - 1;
+        int target = nums[i];
+        int cnt = 0;
+        while (left < right) {
+            int sum = nums[left] + nums[right];
+            if (sum > target) {
+                cnt += right - left;
+                right--;
+            } else {
+                left++;
+            }
+        }
+
+        return cnt;
+    }
+}

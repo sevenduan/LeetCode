@@ -1,0 +1,24 @@
+public class Solution {
+    public int[] TwoSumLessThanK(int[] numbers, int target) {
+        if (numbers == null || numbers.Length == 0)
+            return null;
+
+        Array.Sort(numbers);
+        int cnt = 0;
+        int left = 0;
+        int right = numbers.Length - 1;
+
+        while (left <= right) {
+            int sum = numbers[left] + numbers[right];
+            
+            if (sum > target) {
+                right --;
+            } else {
+                cnt += right - left;
+                left++;
+            }
+        }
+
+        return null;
+    }
+}

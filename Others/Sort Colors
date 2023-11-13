@@ -1,0 +1,22 @@
+public class Solution {
+    public void SortColors(int[] nums) {
+        if (nums == null || nums.Length == 0)
+            return;
+
+        int[] colour = new int[3];
+
+        foreach(var num in nums) {
+            colour[num]++;
+        }
+        
+        int index = 0;
+        for (int i = 0; i < colour.Length; i++) {
+            int cnt = colour[i];
+            while (cnt > 0) {
+                nums[index] = i;
+                index++;
+                cnt--;
+            }
+        }
+    }
+}

@@ -1,0 +1,38 @@
+public class Solution {
+    public int FourSumCount(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {
+        if (nums1 == null || nums2 == null || nums3 == null || nums4 == null)
+            return 0;
+
+        if (nums1.Length ==0 || nums2.Length ==0 || nums3.Length ==0 || nums4.Length ==0)
+            return 0;
+
+        Dictionary<int, int> map = GetMap(nums1, nums2);
+        int result = FindTwoSum(nums3, nums4, map);
+
+        return result;
+    }
+
+    private int FindTwoSum(int[] nums3, int[] nums4, Dictionary<int, int> map) {
+        int result = 0;
+        for (int i = 0; i < nums3.Length; i++) {
+            for (int j = 0; j < nums4.Length; j++) {
+                int sum = nums3[i] + nums4[j];
+                result += map.GetValueOrDefault(-sum, 0);
+            }
+        }
+        
+        return result;
+    }
+
+    private Dictionary<int, int> GetMap(int[] nums1, int[] nums2) {
+        Dictionary<int, int> map = new Dictionary<int, int>();
+        for (int i = 0; i < nums1.Length; i++) {
+            for (int j = 0; j < nums2.Length; j++) {
+                int sum = nums1[i] + nums2[j];
+                map[sum] = map.GetValueOrDefault(sum, 0) + 1;
+            }
+        }
+
+        return map;
+    }
+}

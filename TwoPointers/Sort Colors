@@ -1,0 +1,33 @@
+public class Solution {
+    public void SortColors(int[] nums) {
+        if (nums == null || nums.Length == 0)
+            return;
+
+        PartitionArray(nums, 1); // move >=1 to right
+        PartitionArray(nums, 2); // move >=2 to right
+    }
+
+    private void PartitionArray(int[] nums, int target) {
+        int left = 0;
+        int right = nums.Length - 1;
+
+        while (left <= right) {
+            while (left <= right && nums[left] < target)
+                left++;
+            while (left <= right && nums[right] >= target)
+                right--;
+            
+            if (left <= right) {
+                Swap(nums, left, right);
+                left++;
+                right--;
+            }
+        }
+    }
+
+    private void Swap(int[] nums, int left, int right) {
+        int temp = nums[left];
+        nums[left] = nums[right];
+        nums[right] = temp;
+    }
+}
