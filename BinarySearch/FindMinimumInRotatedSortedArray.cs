@@ -23,9 +23,6 @@ public class SolutionFindMin {
             }
         }
 
-        if (nums[start] < nums[end])
-            return nums[start];
-        else
-            return nums[end];
+        return Math.Min(nums[start], nums[end]);
     }
 }

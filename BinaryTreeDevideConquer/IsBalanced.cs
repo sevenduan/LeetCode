@@ -36,14 +36,17 @@ public class SolutionIsBalanced {
         var left = MaxDepth(root.left);
         var right = MaxDepth(root.right);
 
+        int height = Math.Max(left.maxDepth, right.maxDepth) + 1;
+        bool isBalanced = true;
+
         if (!left.isBalanced || !right.isBalanced) {
-            return new ResultType(false, -1);
+            isBalanced = false;;
         }
 
         if (Math.Abs(left.maxDepth - right.maxDepth) > 1) {
-            return new ResultType(false, -1);
+            isBalanced = false;;
         }
         
-        return new ResultType(true, Math.Max(left.maxDepth, right.maxDepth) + 1);
+        return new ResultType(isBalanced, height);
     }
 }

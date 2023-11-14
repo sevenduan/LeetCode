@@ -1,0 +1,23 @@
+public class Solution {
+    public int PeakIndexInMountainArray(int[] arr) {
+        if (arr == null || arr.Length < 3)
+            return -1;
+        
+        int start = 0; 
+        int end = arr.Length - 1;
+
+        while (start + 1 < end) {
+            int middle = start + (end - start) / 2;
+
+            if (arr[middle] > arr[middle + 1])
+                end = middle;
+            else
+                start = middle;
+        }
+
+        if (arr[start] > arr[end])
+            return start;
+        else
+            return end;
+    }
+}
