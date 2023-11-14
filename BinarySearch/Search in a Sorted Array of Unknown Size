@@ -1,0 +1,32 @@
+// 702
+public class Solution {
+    public int Search(arrayReader reader, int target) {
+        int rangeTotal = 1;
+
+        while (reader.Get(rangeTotal) < target) {
+            rangeTotal = rangeTotal * 2;
+        }
+
+        int start = 0;
+        int end = rangeTotal;
+
+        while (start + 1 < end) {
+            int middle = start + (end - start) / 2;
+            if (reader.Get(middle) < target) {
+                start = middle;
+            } else if (reader.Get(middle) > target) {
+                end = middle;
+            } else {
+                return middle;
+            }
+        }
+
+        if (reader.Get(start) == target)
+            return start;
+        
+        if (reader.Get(end) == target)
+            return end;
+
+        return -1;
+    }
+}

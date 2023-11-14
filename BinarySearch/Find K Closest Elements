@@ -1,0 +1,61 @@
+public class Solution {
+    public IList<int> FindClosestElements(int[] arr, int k, int x) {
+        List<int> result = new List<int>();
+
+        if (arr == null || arr.Length ==0)
+            return result;
+        
+        int left = FindLowerClose(arr, x);
+        int right = left + 1;
+        List<int> leftResult = new List<int>();
+        List<int> rightResult = new List<int>();
+        for (int i = 0; i < k; i++) {
+            if (IsLeftClosest(arr, x, left, right)) {
+                leftResult.Add(arr[left]);
+                left--;
+            } else {
+                rightResult.Add(arr[right]);
+                right++;
+            }
+        }
+        leftResult.Reverse();
+        result.AddRange(leftResult);
+        result.AddRange(rightResult);
+        
+        return result;
+    }
+
+    private bool IsLeftClosest(int[] arr, int target, int left, int right) {
+        if (left < 0)
+            return false;
+        
+        if (right >= arr.Length)
+            return true;
+        
+        int leftDiff = target - arr[left];
+        int rightDiff = arr[right] - target;
+
+        return leftDiff <= rightDiff;
+    }
+
+    private int FindLowerClose(int[] arr, int target) {
+        int start = 0;
+        int end = arr.Length - 1;
+
+        while (start + 1 < end) {
+            int middle = start + (end - start) / 2;
+            if (arr[middle] < target)
+                start = middle;
+            else
+                end = middle;
+        }
+
+        if (arr[end] < target)
+            return end;
+        
+        if (arr[start] < target)
+            return start;
+        
+        return -1;
+    }
+}
