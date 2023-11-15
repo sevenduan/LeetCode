@@ -1,0 +1,88 @@
+public class Solution {
+    public string AlienOrder(string[] words) {
+        Dictionary<char, HashSet<char>> graph = BuildGraph(words);
+        if (graph == null) {
+            return "";
+        }
+        return TopoSorting(graph);
+    }
+
+    private string TopoSorting(Dictionary<char, HashSet<char>> graph) {
+        Dictionary<char, int> indegree = GetIndegree(graph);
+        Queue<char> queue = new Queue<>();
+
+        foreach(var ch in indegree.Keys)
+            if (indegree[ch] == 0) {
+                queue.Enqueue(ch);
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while (queue.Count > 0) {
+            var curr = queue.Dequeue();
+            sb.Append(curr);
+
+            foreach(var next in graph[curr]) {
+                indegree[next]--;
+                if (indegree[next] == 0) {
+                    queue.Enqueue(next);
+                }
+            }
+        }
+
+
+        if (sb.Length != indegree.Count) {
+            return "";
+        }
+        return sb.toString();
+    }
+
+    private Dictionary<char, int> indegree(Dictionary<char, HashSet<char>> graph) {
+        Dictionary<char, int> indegree = new Dictionary<char, int>();
+        foreach (int key in graph.Keys) {
+            indegree[key] = 0;
+        }
+
+        foreach (int key in graph.Keys) {
+            foreach (int next : graph[key]) {
+                indegree[next]++;
+            }
+        }
+        return indegree;
+    }
+
+    private Dictionary<char, HashSet<char>> BuildGraph(string[] words) {
+        Dictionary<char, HashSet<char>> graph = new Dictionary<char, HashSet<char>>();
+
+        // create nodes
+        for (int i = 0; i < words.Length; i++) {
+            for (int j = 0; j < words[i].Length; j++) {
+                char c = words[i][j];
+                if (!graph.ContainsKey(c)) {
+                    graph[c] = new HashSet<char>();
+                }
+            }
+        }
+
+        // create edges
+        for (int i = 0; i < words.Length - 1; i++) {
+            string curr = words[i];
+            string next = words[i+1];
+            int index = 0;
+            int minSize = Math.min(curr.Length, next.Length);
+
+            for (int j = 0; j < minSize; j++) {
+                if (curr[j] != next[j]) {
+                    graph[curr[j]].Add(next[j]);
+                    break;
+                }
+                // check abc ab case
+                if (j == minSize - 1 && curr.Length > next.Length) {
+                    return null;
+                }
+            }
+        }
+
+        return graph;
+    }
+}

@@ -1,0 +1,62 @@
+/**
+ * Definition for a point.
+ * public class Point {
+ *     public int x;
+ *     public int y;
+ *     public Point() { x = 0; y = 0; }
+ *     public Point(int a, int b) { x = a; y = b; }
+ * }
+ */
+
+public class Solution {
+    public int ShortestPath(bool[][] grid, Point source, Point destination) {
+        if (grid == null || grid.Length == 0)
+            return -1;
+        
+        if (grid[0] == null || grid[0].Length == 0)
+            return -1;
+        
+        Queue<Point> queue = new Queue<Point>();
+        Dictionary<int, int> visited = new Dictionary<int, int>();
+
+        queue.Enqueue(source);
+        int col = grid[0].Length;
+        visited.Add(source.x * col + source.y, 0);
+  
+        int[] dx = new int[8] {2, 2, -2, -2, 1, 1, -1, -1};
+        int[] dy = new int[8] {1, -1, 1, -1, 2, -2, 2, -2};
+
+        while (queue.Count > 0) {
+            var cur = queue.Dequeue();
+            int currentKey = cur.x * col + cur.y;
+
+            if (cur.x == destination.x && cur.y == destination.y)
+                return visited[currentKey];
+            
+            for (int i = 0; i < 8; i++) {
+                int newX = cur.x + dx[i];
+                int newY = cur.y + dy[i];
+
+                if (!IsValid(newX, newY, grid))
+                    continue;
+                
+                int newKey = newX * col + newY;
+                
+                if (visited.ContainsKey(newKey))
+                    continue;
+                    
+                queue.Enqueue(new Point(newX, newY));
+                visited[newKey] = visited[currentKey] + 1;
+            }
+        }
+
+        return -1;
+    }
+
+    private bool IsValid(int x, int y, bool[][] grid) {
+        if (x < 0 || x >= grid.Length || y < 0 || y >= grid[0].Length)
+            return false;
+        
+        return grid[x][y];
+    }
+}
