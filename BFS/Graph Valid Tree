@@ -1,0 +1,49 @@
+public class Solution {
+    public bool ValidTree(int n, int[][] edges) {
+        if (n == 0)
+            return false;
+        
+        if (edges.Length != n - 1)
+            return false;
+
+        Dictionary<int, HashSet<int>> graph = BuildGraph(n, edges);
+
+
+        // bfs
+        Queue<int> queue = new Queue<>();
+        HashSet<int> visited = new HashSet<int>();
+
+        queue.Enqueue(0);
+        visited.Add(0);
+
+        while (queue.Count > 0) {
+            var curr = queue.Dequeue();
+
+            foreach(var next in graph[curr]) {
+                if (visited.Contains(next)) {
+                    continue;
+                }
+
+                queue.Enqueue(next);
+                visited.Add(next);
+            };
+        }
+
+        return (visited.Count == n);
+    }
+
+    private Dictionary<int, HashSet<int>> BuildGraph(int n, int[][] edges) {
+        Dictionary<int, HashSet<int>> graph = new Dictionary<int, HashSet<int>>();
+        
+        for (int i = 0; i < n; i++) {
+            graph[i] = new HashSet<int>();
+        }
+
+        foreach(var edge in edges) {
+            graph[edge[0]].Add(edge[1]);
+            graph[edge[1]].Add(edge[0]);
+        }
+
+        return graph;
+    }
+}
