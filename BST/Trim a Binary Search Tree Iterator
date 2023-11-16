@@ -1,0 +1,46 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left;
+ *     public TreeNode right;
+ *     public TreeNode(int val=0, TreeNode left=null, TreeNode right=null) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+public class Solution {
+    public TreeNode TrimBST(TreeNode root, int low, int high) {
+        if (root == null)
+            return root;
+        
+        // find new root between low and high
+        while (root != null && (root.val < low || root.val > high)){
+            if (root.val < low)
+                root = root.right;
+            else
+                root = root.left;
+        }
+
+        TreeNode curr = root;
+        while (curr != null) {
+            while(curr.left != null && curr.left.val < low){
+                curr.left = curr.left.right;
+            }
+            curr = curr.left;
+        }
+
+        //go back to root;
+        curr = root;
+        while (curr != null) {
+            while (curr.right != null && curr.right.val > high) {
+                curr.right = curr.right.left;
+            }
+            curr = curr.right;
+        }
+
+        return root;
+    }
+}
