@@ -1,0 +1,91 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left;
+ *     public TreeNode right;
+ *     public TreeNode(int val=0, TreeNode left=null, TreeNode right=null) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+public class Solution {
+    public List<int> ClosestKValue(TreeNode root, double target, int k) {        
+        List<int> values = new List<int>();
+        
+        if (k == 0 || root == null) {
+            return values;
+        }
+        
+        Stack<TreeNode> lowerStack = GetStack(root, target);
+        Stack<TreeNode> upperStack = new Stack<TreeNode>(lowerStack.ToArray());
+        
+        if (target < lowerStack.Peek().val) {
+            MoveLower(lowerStack);
+        } else {
+            MoveUpper(upperStack);
+        }
+
+        for (int i = 0; i < k; i++) {
+            if (lowerStack.Count == 0 ||
+                   upperCount > 0 && target - lowerStack.Peek().val > upperStack.Peek().val - target) {
+                values.Add(upperStack.Peek().val);
+                MoveUpper(upperStack);
+            } else if (upperStack.Count > 0) {
+                values.Add(lowerStack.Peek().val);
+                MoveLower(lowerStack);
+            }
+        }
+
+        return values;
+    }
+
+    private void MoveLower(Stack<TreeNode> stack) {
+        TreeNode node = stack.Peek();
+        if (node.left == null) {
+            node = stack.Pop();
+            while (stack.Count > 0 && stack.Peek().left == node) {
+                node = stack.Pop();
+            }
+        } else {
+            node = node.left;
+            while (node != null) {
+                stack.Push(node);
+                node = node.right;
+            }
+        }
+    }
+    private void MoveUpper(Stack<TreeNode> stack) {
+        TreeNode node = stack.Peek();
+        if (node.right == null) {
+            node = stack.Pop();
+            while (stack.Count > 0 && stack.Peek().right == node) {
+                node = stack.Pop();
+            }
+        } else {
+            node = node.right;
+            while (node != null) {
+                stack.Push(node);
+                node = node.left;
+            }
+        }        
+    }
+
+    private Stack<TreeNode> GetStack(TreeNode root, double target) {
+        Stack<TreeNode> stack = new Stack<>();
+        
+        while (root != null) {
+            stack.Push(root);
+            
+            if (target < root.val) {
+                root = root.left;
+            } else {
+                root = root.right;
+            }
+        }
+        
+        return stack;
+    }
+}
