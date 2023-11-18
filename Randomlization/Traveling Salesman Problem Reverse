@@ -1,0 +1,114 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+        /**
+         * @param n: an integer,denote the number of cities
+         * @param roads: a list of three-tuples,denote the road between cities
+         * @return: return the minimum cost to travel all cities
+         */
+        public int RANDOM_TIMES = 1000;
+        public int inf = int.MaxValue;
+        public Random rand =new Random(10000);
+        public int MinCost(int n, int[][] roads) {
+            // Write your code here
+            var graph = BuildGraph(roads, n);            
+            int minimalCost = inf;
+            for (int i = 0; i < RANDOM_TIMES; i++) {
+                int[] path = GetRandomPath(n);
+                int cost = AdjustPath(path, graph);
+                minimalCost = Math.Min(minimalCost, cost);
+            }
+            return minimalCost;
+        }
+
+        private void Reverse(int[] path, int i, int j) {
+            while (i < j) {
+                int tmp = path[i];
+                path[i] = path[j];
+                path[j] = tmp;
+                i++;
+                j--;
+            }
+        }
+
+        private bool CanReverse(int[] path, int i, int j, int[][] graph) {
+            int before = graph[path[i - 1]][path[i]];
+            if (j + 1 < path.Length) {
+                before += graph[path[j]][path[j + 1]];
+            }
+            int after = graph[path[i - 1]][path[j]];
+            if (j + 1 < path.Length) {
+                after += graph[path[i]][path[j + 1]];
+            }
+            
+            return before > after;
+        }
+
+        private int AdjustPath(int[] path, int[][] graph) {
+            int n = graph.Length - 1;
+            bool adjusted = true;
+            while (adjusted) {
+                adjusted = false;
+                for (int i = 1; i < n; i++) {
+                    for (int j = i + 1; j < n; j++) {
+                        if (CanReverse(path, i, j, graph)) {
+                            Reverse(path, i, j);
+                            adjusted = true;
+                        }
+                    }
+                }
+            }
+            int cost = 0;
+            for (int i = 1; i < n; i++) {
+                cost += graph[path[i - 1]][path[i]];
+            }
+            
+            return cost;
+        }
+
+        private int[] GetRandomPath(int n) {
+            int[] path = new int[n];
+            for (int i = 0; i < n; i++) {
+                path[i] = i + 1;
+            }
+            for (int i = 2; i < n; i++) {
+                int j = rand.Next(10000) % i + 1;
+                Swap(path, i, j);
+            }
+
+            return path;
+        }
+
+        private void Swap(int[] path, int i, int j) {
+            int tmp = path[i];
+            path[i] = path[j];
+            path[j] = tmp;
+        }
+
+        private int[][] BuildGraph(int[][] roads, int n) {
+            int[][] graph = new int[n + 1][];
+            for (int i = 0; i < n + 1; i++)
+            {
+                graph[i] = new int[n + 1];
+                for (int j = 0; j < n + 1; j++)
+                {
+                    graph[i][j] = 100000;
+                }
+            }
+
+            int roadsLength = roads.Length;
+            for (int i = 0; i < roadsLength; i++)
+            {
+                int a = roads[i][0], b = roads[i][1], c = roads[i][2];
+                graph[a][b] = Math.Min(graph[a][b], c);
+                graph[b][a] = Math.Min(graph[b][a], c);
+            }
+
+            return graph;
+        }
+    }
+}

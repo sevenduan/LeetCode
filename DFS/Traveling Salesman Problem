@@ -1,0 +1,76 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Result {
+        public int minCost;
+        public Result(){
+            this.minCost = 1000000;
+        }
+    }
+
+    class Solution {
+        /**
+         * @param n: an integer,denote the number of cities
+         * @param roads: a list of three-tuples,denote the road between cities
+         * @return: return the minimum cost to travel all cities
+         */
+        public int MinCost(int n, int[][] roads) {
+            // Write your code here
+            var graph = BuildGraph(roads, n);
+
+            HashSet<int> visited = new HashSet<int>();
+            List<int> path = new List<int>();
+            
+            path.Add(1);
+            visited.Add(1);
+            Result result = new Result();
+
+            Dfs(1, n, path, visited, 0, graph, result);
+            return result.minCost;
+        }
+
+        private void Dfs(int city, int n, List<int> path, HashSet<int> visited, int cost, int[][] graph, Result result) {
+            if (visited.Count == n) {
+                result.minCost = Math.Min(result.minCost, cost);
+                return ;
+            }
+            
+            for(int i = 1; i < graph[city].Length; i++) {
+                if (visited.Contains(i)) {
+                    continue;
+                }
+
+                visited.Add(i);
+                path.Add(i);
+                Dfs(i, n, path, visited, cost + graph[city][i], graph, result);
+                visited.Remove(i);
+                path.RemoveAt(path.Count - 1);
+            }
+        }
+
+        private int[][] BuildGraph(int[][] roads, int n) {
+            int[][] graph = new int[n + 1][];
+            for (int i = 0; i < n + 1; i++)
+            {
+                graph[i] = new int[n + 1];
+                for (int j = 0; j < n + 1; j++)
+                {
+                    graph[i][j] = 100000;
+                }
+            }
+
+            int roadsLength = roads.Length;
+            for (int i = 0; i < roadsLength; i++)
+            {
+                int a = roads[i][0], b = roads[i][1], c = roads[i][2];
+                graph[a][b] = Math.Min(graph[a][b], c);
+                graph[b][a] = Math.Min(graph[b][a], c);
+            }
+
+            return graph;
+        }
+    }
+}
