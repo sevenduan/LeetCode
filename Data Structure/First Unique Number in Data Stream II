@@ -1,0 +1,70 @@
+public class DataStream {
+    
+    private ListNode head, tail;
+    private Dictionary<int, ListNode> numToPrev;
+    private HashSet<int> duplicates; 
+
+    private class ListNode
+    {
+        public int Value { get; }
+        public ListNode Next { get; set; }
+
+        public ListNode(int value)
+        {
+            this.Value = value;
+        }
+    }
+
+    public DataStream(){
+        // do intialization if necessary
+        head = new ListNode(0);
+        tail = head;
+        
+        numToPrev = new Dictionary<int, ListNode> ();
+        duplicates = new HashSet<int>();
+    }
+    /**
+     * @param num: next number in stream
+     * @return: nothing
+     */
+    public void Add(int num) {
+        // write your code here
+        if (duplicates.Contains(num)) {
+            return;
+        }
+        
+        if (numToPrev.ContainsKey(num)) {
+            Remove(num);
+            duplicates.Add(num);
+        } else {
+            ListNode node = new ListNode(num);
+            numToPrev[num] = tail;
+            tail.Next = node;
+            tail = node;
+        }
+    }
+
+    private void Remove(int number) {
+        ListNode prev = numToPrev[number];
+        prev.Next = prev.Next.Next;
+        numToPrev.Remove(number);
+        
+        // change tail and prev of next
+        if (prev.Next != null) {
+            numToPrev[prev.Next.Value] = prev;
+        } else {
+            tail = prev;
+        }
+    }
+
+    /**
+     * @return: the first unique number in stream
+     */
+    public int FirstUnique() {
+        // write your code here
+        if (head.Next != null) {
+            return head.Next.Value;
+        }
+        return -1;
+    }
+}
