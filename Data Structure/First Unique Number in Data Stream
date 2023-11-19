@@ -18,10 +18,7 @@ namespace lintcode
             Dictionary<int, bool> map = new Dictionary<int, bool>();
 
             foreach (int num in nums) {
-                if (map.ContainsKey(num))
-                    map[num] = false;
-                else
-                    map[num] = true;
+                map[num] = !map.ContainsKey(num);
                 
                 if (num == number)
                     break;
