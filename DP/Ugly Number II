@@ -1,0 +1,31 @@
+public class Solution {
+    public int NthUglyNumber(int n) {
+        if (n < 1)
+            return -1;
+        
+        int[] dp = new int[n];
+        dp[0] = 1;
+        int l2 = 0, l3 = 0, l5 = 0;
+
+        for (int i = 1; i < n; i++) {
+            int a = dp[l2] * 2;
+            int b = dp[l3] * 3;
+            int c = dp[l5] * 5;
+
+            dp[i] = Math.Min(Math.Min(a, b), c);
+            Console.WriteLine(dp[i] + ":" + i );
+
+            if (dp[i] == a) {
+                l2++;
+            } 
+            if (dp[i] == b) {
+                l3++;
+            }
+            if (dp[i] == c) {
+                l5++;
+            }
+        }
+
+        return dp[n - 1];
+    }
+}
