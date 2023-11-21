@@ -1,0 +1,61 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+        /**
+         * @param grid: a chessboard included 0 and 1
+         * @return: the shortest path
+         */
+        public int ShortestPath2(bool[][] grid) {
+            // write your code here
+            if (grid == null || grid.Length == 0)
+                return -1;
+            
+            if (grid[0] == null || grid[0].Length == 0)
+                return -1;
+
+            if (grid[0][0])
+                return -1;
+
+            int rows = grid.Length;
+            int cols = grid[0].Length;
+
+            int[,] dp = new int[rows, cols];
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    dp[i, j] = int.MaxValue;
+                }
+            }
+
+            dp[0, 0] = 0;
+
+            for (int j = 1; j < cols; j++) {
+                for (int i = 0; i < rows; i++) {
+                    if (grid[i][j])
+                        continue;
+
+                    if (i >= 1 && j >= 2 && dp[i - 1, j - 2] != int.MaxValue){
+                        dp[i, j] = Math.Min(dp[i - 1, j - 2] + 1, dp[i, j]);
+                    }
+                    if (i + 1 < rows && j >= 2 && dp[i + 1, j - 2] != int.MaxValue) {
+                        dp[i, j] = Math.Min(dp[i + 1, j - 2] + 1, dp[i, j]);
+                    }
+                    if (i >= 2 && j >= 1 && dp[i - 2, j - 1] != int.MaxValue) {
+                        dp[i, j] = Math.Min(dp[i - 2, j - 1] + 1, dp[i, j]);
+                    }
+                    if (i + 2 < rows && j >= 1 && dp[i + 2, j - 1] != int.MaxValue) {
+                        dp[i, j] = Math.Min(dp[i + 2, j - 1] + 1, dp[i, j]);
+                    }
+                }
+            }
+        
+            if (dp[rows - 1, cols - 1] == int.MaxValue)
+                return -1;
+
+            return dp[rows - 1, cols - 1];
+        }
+    }
+}
