@@ -1,0 +1,29 @@
+// JAVA
+public class Solution {
+    /**
+     * @param nums: an integer array
+     * @param k: An integer
+     * @return: the top k largest numbers in array
+     */
+    public int[] topk(int[] nums, int k) {
+        // write your code here
+        PriorityQueue<Integer> minheap = new PriorityQueue<>();
+
+        for (Integer num : nums) {
+            if (minheap.size() < k) {
+                minheap.add(num);
+            } else if (minheap.peek() < num) {
+                minheap.poll();
+                minheap.add(num);
+            }
+        }
+        
+        int[] result = new int[k];
+        for (int i = 0; i < result.length; i++) {
+            result[k - i - 1] = minheap.poll();
+        }
+
+        return result;
+
+    }
+}

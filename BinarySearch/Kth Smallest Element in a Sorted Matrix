@@ -1,0 +1,53 @@
+public class Solution {
+
+    public int KthSmallest(int[][] matrix, int k) {
+        if (matrix == null || matrix.Length == 0)
+            return -1;
+
+        if (matrix[0] == null || matrix[0].Length == 0)
+            return -1;
+
+        int n = matrix.Length;
+        int lo = matrix[0][0];
+        int hi = matrix[n-1][n-1];
+        
+        while(lo + 1 < hi) {
+            int mid = CalMid(lo, hi);
+            int count = CountNoMoreThan(matrix, mid);
+            if (count >= k)
+                hi = mid;
+            else
+                lo = mid;
+        }
+
+        if (CountNoMoreThan(matrix, lo) >= k) {
+            return lo;
+        }
+
+        return hi;
+    }
+
+    private int CountNoMoreThan(int[][] matrix, int value) {
+        int cnt = 0;
+        int n = matrix.Length;
+        int i = 0, j = n - 1;
+        while (i < n && j >= 0) {
+            if (matrix[i][j] <= value) {
+                cnt += j + 1;
+                i++;
+            } else {
+                j--;
+            }
+        }
+        
+        return cnt;
+    }
+
+    private int CalMid(int lo, int hi) {
+         if (lo < 0 & hi > 0) {
+             return (lo + hi) / 2;
+         } else {
+             return lo + (hi - lo) / 2;
+         }
+    }
+}

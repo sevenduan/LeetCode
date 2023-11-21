@@ -1,0 +1,60 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+
+        private class Node
+        {
+            public int ArrayIndex;
+            public int Index;
+            public int Value;
+
+            public Node(int arrayIndex, int index, int value)
+            {
+                ArrayIndex = arrayIndex;
+                Index = index;
+                Value = value;
+            }
+        }
+        /**
+         * @param arrays: k sorted integer arrays
+         * @return: a sorted array
+         */
+        public int[] MergekSortedArrays(int[][] arrays) {
+            // write your code here
+            if (arrays == null || arrays.Length == 0)
+                return new int[0];
+
+            if (arrays[0] == null || arrays[0].Length == 0)
+                return new int[0];
+
+            PriorityQueue<Node, int> queue = new PriorityQueue<Node, int>();
+            int totalSize = 0;
+            for (int i = 0; i < arrays.Length; i++) {
+                int size = arrays[i].Length;
+                if (size > 0) {
+                    var node = new Node(i, 0, arrays[i][0]);
+                    queue.Enqueue(node, arrays[i][0]);
+                    totalSize += size;
+                }
+            }
+
+            int[] answer = new int[totalSize];
+            int index = 0;
+            while (queue.Count > 0) {
+                var node = queue.Dequeue();
+                answer[index++] = node.Value;
+                if (node.Index + 1 < arrays[node.ArrayIndex].Length) {
+                    node.Index++;
+                    node.Value = arrays[node.ArrayIndex][node.Index];                    
+                    queue.Enqueue(node, node.Value);
+                }
+            }
+
+            return answer;
+        }
+    }
+}

@@ -1,0 +1,38 @@
+public class Solution {
+    private class Pos {
+        public int i {get; set;}
+        public int j {get; set;}
+        public Pos(int i, int j) {
+            this.i = i;
+            this.j = j;
+        }
+    }
+
+    public int KthSmallest(int[][] matrix, int k) {
+        if (matrix == null || matrix.Length == 0)
+            return -1;
+
+        if (matrix[0] == null || matrix[0].Length == 0)
+            return -1;
+
+        int n = matrix.Length;
+        PriorityQueue<Pos, int> minheap = new PriorityQueue<Pos, int>();
+
+        for (int i = 0; i < n; i++) {
+            minheap.Enqueue(new Pos(i, 0), matrix[i][0]);
+        }
+
+        for (int i = 0; i < k - 1; i++) {
+            Pos top = minheap.Dequeue();
+
+            if (top.j + 1 < n) {
+                top.j++;
+                minheap.Enqueue(top, matrix[top.i][top.j]);
+            }
+        }
+
+        Pos kth = minheap.Dequeue();
+        return matrix[kth.i][kth.j];
+    }
+
+}

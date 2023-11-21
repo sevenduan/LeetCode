@@ -1,0 +1,30 @@
+public class Solution {
+    public int[][] KClosest(int[][] points, int k) {
+        if (points == null || points.Length == 0)
+            return new int[0][];
+
+        if (points[0] == null || points[0].Length == 0)
+            return new int[0][];
+
+        PriorityQueue<int[], int> maxHeap = new PriorityQueue<int[], int>(Comparer<int>.Create((x, y) => y.CompareTo(x)));
+
+        foreach(var point in points) {
+            int distance = point[0] * point[0] + point[1] * point[1];
+            maxHeap.Enqueue(point, distance);
+
+            if (maxHeap.Count > k) {
+                maxHeap.Dequeue();
+            }
+        }
+
+        int[][] result = new int[k][];
+        int i = 0;
+        while (maxHeap.Count > 0) {
+            var point = maxHeap.Dequeue();            
+            result[i] = new int[2] {point[0], point[1]};
+            i++;
+        }
+
+        return result;    
+    }
+}

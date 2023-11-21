@@ -1,0 +1,39 @@
+// JAVA
+public class Solution {
+    private int maxSize;
+    private Queue<Integer> minheap;
+    /*
+    * @param k: An integer
+    */public Solution(int k) {
+        // do intialization if necessary
+        minheap = new PriorityQueue<>();
+        maxSize = k;
+    }
+
+    /*
+     * @param num: Number to be added
+     * @return: nothing
+     */
+    public void add(int num) {
+        // write your code here
+        minheap.offer(num);
+
+        if (minheap.size() > maxSize) {
+            minheap.poll();
+        }
+    }
+
+    /*
+     * @return: Top k element
+     */
+    public List<Integer> topk() {
+        // write your code here
+        Iterator it = minheap.iterator();
+        List<Integer> result = new ArrayList<Integer>();
+        while (it.hasNext()) {
+            result.add((Integer) it.next());
+        }
+        Collections.sort(result, Collections.reverseOrder());
+        return result;
+    }
+}
