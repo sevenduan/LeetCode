@@ -1,0 +1,53 @@
+public class Solution {
+    public bool IsMatch(string s, string p) {        
+        if (s == null || p == null) {
+            return false;
+        }
+        int n = s.Length;
+        int m = p.Length;
+
+        bool[,] memo = new bool[n, m];
+        bool[,] visited = new bool[n, m];
+        return IsMatchHelper(s, 0, p, 0, memo, visited);
+    }
+
+    private bool IsMatchHelper(string s, int sIndex, string p, int pIndex, bool[,] memo, bool[,] visited) {
+        if (pIndex == p.Length) {
+            return sIndex == s.Length;
+        }
+        if (sIndex == s.Length) {
+            return AllStar(p, pIndex);
+        }
+        if (visited[sIndex, pIndex]) {
+            return memo[sIndex, pIndex];
+        }
+
+        var sch = s[sIndex];
+        var pch = p[pIndex];
+        bool match = false;
+
+        if (pch == '*') {
+            match = IsMatchHelper(s, sIndex, p, pIndex + 1, memo, visited) 
+                || IsMatchHelper(s, sIndex + 1, p, pIndex, memo, visited) ;
+        } else {
+            match = Match(sch, pch) && IsMatchHelper(s, sIndex + 1, p, pIndex + 1, memo, visited);
+        }
+
+        visited[sIndex, pIndex] = true;
+        memo[sIndex, pIndex] = match;
+        return match;
+    }
+
+    private bool Match(char s, char p) {
+        return s == p || p == '?';
+    }
+
+    private bool AllStar(string p, int pIndex) {
+        for(int i = pIndex; i < p.Length; i++) {
+            if (p[i] != '*')
+                return false;
+        }
+
+        return true;
+    }
+}

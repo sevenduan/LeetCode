@@ -1,0 +1,55 @@
+// Memoization search
+public class Solution {
+    public IList<string> WordBreak(string s, IList<string> wordDict) {
+        int maxLength = GetMaxLength(wordDict);
+        Dictionary<string, List<string>> memo = new Dictionary<string, List<string>>();
+        HashSet<string> dict = new HashSet<string>(wordDict);
+        return WordBreakHelper(s, dict, memo, maxLength);
+    }
+
+    private IList<string> WordBreakHelper(string s, HashSet<string> dict, Dictionary<string, List<string>> memo, int maxLength) {
+        if (memo.ContainsKey(s)) {
+            return memo[s];
+        }
+
+        List<string> results = new List<string>();
+        if (string.IsNullOrEmpty(s)) {
+            return results;
+        }
+        
+        if (dict.Contains(s)) {
+            results.Add(s);
+        }
+
+        for (int len = 1; len < s.Length; len++){
+            String word = s.Substring(0, len);
+            if (!dict.Contains(word)) {
+                continue;
+            }
+
+            if (len > maxLength) {
+                break;
+            }
+            
+            string suffix = s.Substring(len);
+            var segmentations = WordBreakHelper(suffix, dict, memo, maxLength);
+            
+            foreach (var segmentation in segmentations){
+                results.Add(word + " " + segmentation);
+            }
+        }
+        
+        memo[s] = results;
+        return results;
+
+    }
+
+    private int GetMaxLength(IList<string> wordDict) {
+        int max = 0;
+        foreach(var word in wordDict) {
+            max = Math.Max(word.Length, max);
+        }
+
+        return max;
+    }
+}

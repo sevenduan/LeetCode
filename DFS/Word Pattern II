@@ -1,0 +1,54 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+        /**
+         * @param pattern: a string,denote pattern string
+         * @param str: a string, denote matching string
+         * @return: a boolean
+         */
+        public bool WordPatternMatch(string pattern, string str) {
+            // write your code here
+            Dictionary<char, string> dict = new Dictionary<char, string>();
+            HashSet<string> used = new HashSet<string>();
+
+            return IsMatch(pattern, str, dict, used);
+        }
+
+        private bool IsMatch(string pattern, string str, Dictionary<char, string> dict, HashSet<string> used) {
+            if (pattern.Length == 0) {
+                return str.Length == 0;
+            }
+            var ch = pattern[0];
+            if (dict.ContainsKey(ch)) {
+                var word = dict[ch];
+                if (!str.StartsWith(word))
+                    return false;
+                
+                return IsMatch(pattern.Substring(1), str.Substring(word.Length), dict, used);
+            }
+
+            // new 
+            for (int i = 0; i < str.Length; i++) {
+                var word  = str.Substring(0, i + 1);
+                if (used.Contains(word))
+                    continue;
+
+                dict[ch] = word;
+                used.Add(word);
+
+                if (IsMatch(pattern.Substring(1), str.Substring(i + 1), dict, used)) {
+                    return true;
+                }
+
+                used.Remove(word);
+
+                dict.Remove(ch);
+            }
+            return false;
+        }
+    }
+}

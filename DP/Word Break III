@@ -1,0 +1,46 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+        /**
+         * @param s: A string
+         * @param dict: A set of word
+         * @return: the number of possible sentences.
+         */
+        public int WordBreak3(string s, ISet<string> dict) {
+            // Write your code here
+            s = s.ToLower();
+            int maxLength = 0;
+            HashSet<string> set = new HashSet<string>();
+            foreach (var word in dict) {
+                var str = word.ToLower();
+                maxLength = Math.Max(maxLength, word.Length);
+                set.Add(str);
+            }
+
+            int n = s.Length;
+            //dp[i] means s[0, i) total numbers
+            int[] dp = new int[n + 1];
+            dp[0] = 1;
+
+            for (int i = 0; i < n; i++) {
+                for (int j = i; j < n; j++) {
+                    var length = j - i + 1;
+                    if (length > maxLength) {
+                        break;
+                    }
+
+                    var word = s.Substring(i, length);
+                    if (set.Contains(word)) {
+                        dp[j + 1] += dp[i];
+                    }
+                }
+            }
+
+            return dp[n];
+        }
+    }
+}
