@@ -1,0 +1,64 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+        /**
+         * @param matrix: A 2D-array of integers
+         * @return: an integer
+         */
+        public int LongestContinuousIncreasingSubsequence2(int[][] matrix) {
+            // write your code here
+            if (matrix == null || matrix.Length == 0)
+                return 0;
+            
+            if (matrix[0] == null || matrix[0].Length == 0)
+                return 0;
+            
+            List<List<int>> points = new List<List<int>>();
+
+            int n = matrix.Length;
+            int m = matrix[0].Length;
+
+            for(int i = 0; i < n; i++) {
+                for(int j = 0; j < m; j++) {
+                    points.Add(new List<int>(){i, j, matrix[i][j]});
+                }
+            }
+            points.Sort((p1, p2) => p1[2].CompareTo(p2[2]));
+            int[,] dp = new int[n, m];
+
+            int[] dx = { 1, -1, 0, 0 };
+            int[] dy = { 0, 0, 1, -1 };
+
+            for (int i = 0; i < points.Count; i++) {
+                int x = points[i][0];
+                int y = points[i][1];
+                dp[x, y] = 1;
+
+                for(int d = 0; d < 4; d++) {
+                    int prevX = x + dx[d];
+                    int prevY = y + dy[d];
+
+                    if (prevX < 0 || prevX >= n || prevY < 0 || prevY >= m)
+                        continue;
+                    
+                    if (matrix[prevX][prevY] < matrix[x][y]) {
+                        dp[x, y] = Math.Max(dp[x, y], dp[prevX, prevY] + 1);
+                    }
+                }
+            }
+
+            int answer = 0;
+            for(int i = 0; i < n; i++) {
+                for(int j = 0; j < m; j++) {
+                    answer = Math.Max(answer, dp[i, j]);
+                }
+            }
+
+            return answer;
+        }
+    }
+}
