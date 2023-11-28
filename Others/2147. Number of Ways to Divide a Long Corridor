@@ -1,0 +1,30 @@
+public class Solution {
+    private int mod = 1000000007;
+    public int NumberOfWays(string corridor) {
+        if (corridor == null || corridor.Length == 0) {
+            return 0;
+        }
+
+        List<int> pos = new List<int>();
+
+        for (int i = 0; i < corridor.Length; i++) {
+            if (corridor[i] == 'S')
+                pos.Add(i);
+        }
+
+        if (pos.Count == 0)
+            return 0;
+        
+        if (pos.Count % 2 != 0) 
+            return 0;
+
+        long result = 1;
+        for (int i = 2; i + 2 <= pos.Count; i+=2) {
+            long diff = pos[i] - pos[i - 1];
+            result *= diff;
+            result %= mod;
+        }
+
+        return (int)result;
+    }
+}

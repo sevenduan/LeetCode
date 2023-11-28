@@ -1,0 +1,71 @@
+public class Solution {
+    public IList<int> LargestDivisibleSubset(int[] nums) {
+        List<int> result = new List<int>();
+        if (nums == null || nums.Length == 0)
+            return result;
+        
+        Array.Sort(nums);
+        
+        int n = nums.Length;
+
+        Dictionary<int, int> dp = new Dictionary<int, int>();
+        Dictionary<int, int> pre = new Dictionary<int, int>();
+
+        for (int i = 0; i < n; i++) {
+            dp[nums[i]] = 1;
+            pre[nums[i]] = -1;
+        }
+
+        int lastNum = nums[0];
+
+        for(int i = 1; i < n; i++) {
+            var factors = GetFactors(nums[i]);
+            foreach (int factor in factors) {
+                if (!dp.ContainsKey(factor)) {
+                    continue;
+                }
+
+                if (dp[nums[i]] < dp[factor] + 1) {
+                    dp[nums[i]] = dp[factor] + 1;
+                    pre[nums[i]] = factor;
+                }
+            }
+
+            if (dp[nums[i]] > dp[lastNum]) {
+                lastNum = nums[i];
+            }
+        }
+
+        return GetPath(pre, lastNum);
+    }
+
+    private List<int> GetPath(Dictionary<int, int>  pre, int lastNum) {
+        List<int> path = new List<int>();
+
+        while (lastNum != -1) {
+            path.Add(lastNum);
+            lastNum = pre[lastNum];
+        }
+        path.Reverse();
+
+        return path;
+    }
+
+    private List<int> GetFactors(int num) {
+        List<int> factors = new List<int>();
+        if (num == 1) {
+            return factors;
+        }
+        int factor = 1;
+        while (factor * factor <= num) {
+            if (num % factor == 0) {
+                factors.Add(factor);
+                if (factor != 1 && num / factor != factor) {
+                    factors.Add(num / factor);
+                }
+            }
+            factor++;
+        }
+        return factors;
+    }
+}
