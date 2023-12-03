@@ -1,0 +1,67 @@
+public class Solution {    
+    public int MinArea(char[][] image, int x, int y) {
+        // write your code here 
+        if (image == null || image.Length == 0)
+            return 0;
+        
+        if (image[0] == null || image[0].Length == 0)
+            return 0;
+        
+        int n = image.Length;
+        int m = image[0].Length;
+
+        int left = FindFirst(image, 0, y, true);
+        int right = FindLast(image, y, m - 1, true);
+        int top = FindFirst(image, 0, x, false);
+        int bottom = FindLast(image, x, n - 1, false);
+
+        int area = (right - left + 1) * (bottom - top + 1);
+
+        return area;
+    }
+
+    private int FindLast(char[][] image, int start, int end, bool isColumn) {
+        while (start + 1 < end) {
+            int mid = start + (end - start) / 2;
+            if (IsBlack(image, mid, isColumn))
+                start = mid;
+            else
+                end = mid;
+        }
+
+        return IsBlack(image, end, isColumn) ? end : start;
+    }
+
+    private int FindFirst(char[][] image, int start, int end, bool isColumn) {
+        while (start + 1 < end) {
+            int mid = start + (end - start) / 2;
+            if (IsBlack(image, mid, isColumn)) {
+                end = mid;
+            } else {
+                start = mid;
+            }
+        }
+
+        return IsBlack(image, start, isColumn) ? start : end;
+    }
+
+    private bool IsBlack(char[][] image, int index, bool isColumn) {
+        return isColumn ? CheckColumn(image, index) : CheckRow(image, index);
+    }
+
+    private bool CheckColumn(char[][] image, int col) {
+        for (int i = 0 ; i < image.Length; i++) {
+            if (image[i][col] == '1')
+                return true;
+        }
+        return false;
+    }
+
+    private bool CheckRow(char[][] image, int row) {
+        for (int i = 0 ; i < image[0].Length; i++) { // could use left, right result to optimize
+            if (image[row][i] == '1')
+                return true;
+        }
+        return false;
+    }
+}
