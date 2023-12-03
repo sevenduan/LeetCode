@@ -1,0 +1,26 @@
+public class Solution {
+    public int MinTimeToVisitAllPoints(int[][] points) {
+        if (points == null || points.Length < 1)
+            return 0;
+        
+        if (points[0] == null || points[0].Length == 0)
+            return 0;
+
+        int result = 0;
+        
+        var start = points[0];
+        for (int i = 1; i < points.Length; i++) {
+            result += GetMinTime(start, points[i]);
+            start = points[i];
+        }
+
+        return result;
+    }
+
+    private int GetMinTime(int[] pointx, int[] pointy) {
+        int diffx = Math.Abs(pointx[0] - pointy[0]);
+        int diffy = Math.Abs(pointx[1] - pointy[1]);
+        
+        return Math.Max(diffx, diffy);
+    }
+}
