@@ -1,0 +1,46 @@
+public class Solution {
+    public bool SearchMatrix(int[][] matrix, int target) {
+        if (matrix == null || matrix.Length == 0)
+            return false;
+        
+        if (matrix[0] == null || matrix[0].Length == 0)
+            return false;
+        
+        int row = matrix.Length;
+        int col = matrix[0].Length;
+
+        int start = 0;
+        int end = row * col - 1;
+
+        return BinarySearch(matrix, target, start, end);
+    }
+
+    private bool BinarySearch(int[][] matrix, int target, int start, int end) {
+        while (start + 1 < end) {
+            int middle = start + (end - start) / 2;
+            int res = GetValueInMatrix(matrix, middle);
+            if (res == target)
+                return true;
+            
+            if (res < target)
+                start = middle;
+            else
+                end = middle;
+        }
+
+        if (GetValueInMatrix(matrix, start) == target)
+            return true;
+
+        if (GetValueInMatrix(matrix, end) == target)
+            return true;
+
+        return false;
+    }
+
+    private int GetValueInMatrix(int[][] matrix, int index) {
+        int col = matrix[0].Length;
+        int x = index / col;
+        int y = index % col;
+        return matrix[x][y];
+    }
+}
