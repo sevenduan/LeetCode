@@ -1,0 +1,40 @@
+public class Solution {
+    public string LargestGoodInteger(string num) {
+        if (num == null || num.Length <= 2)
+            return "";
+        
+        char old = num[0];
+        int good = 0;
+
+        int result = -1;
+
+        for (int i = 1; i < num.Length; i++) {
+            char curr = num[i];
+            if (!char.IsDigit(curr)) {
+                good = 0;
+                continue;
+            }
+
+            if (curr == old) {
+                good++;
+                if (good == 2) {
+                    result = Math.Max(result, curr - '0');
+                    good = 0;
+                }
+            } else {
+                good = 0;
+            }
+            old = curr;
+        }
+
+        if (result == -1)
+            return "";
+        
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 3; i++){
+            sb.Append((char)(48 + result));
+        }
+
+        return sb.ToString();
+    }
+}
