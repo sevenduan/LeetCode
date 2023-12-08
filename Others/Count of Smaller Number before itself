@@ -1,0 +1,73 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Block {
+        public int Total { get; set; }
+        public int[] Counter { get; set; }
+        public Block(int blockSize) {
+            this.Total = 0;
+            this.Counter = new int[blockSize];
+        }
+    }
+
+    class BlockArray {
+        public Block[] blocks;
+        public int blockSize;
+
+        public BlockArray(int capacity) {
+            blockSize = (int)Math.Sqrt(capacity);
+            int blockCount = capacity / blockSize + 1;
+            blocks = new Block[blockCount];
+
+            for (int i = 0; i < blockCount; i++) {
+                blocks[i] = new Block(blockSize);
+            }
+
+        }
+
+        public int CountSmaller(int number) {
+            int index = number / blockSize;
+            int count = 0;
+            for (int i = 0; i < index; i++) {
+                count += blocks[i].Total;
+            }
+
+            for (int i = 0; i + blockSize * index < number; i++) {
+                count += blocks[index].Counter[i];
+            }
+
+            return count;
+        }
+
+        public void Insert(int number) {
+            int index = number / blockSize;
+            int j = number - index * blockSize;
+            blocks[index].Counter[j]++;
+            blocks[index].Total++;
+        }
+    }
+    class Solution {
+        /**
+         * @param a: an integer array
+         * @return: A list of integers includes the index of the first number and the index of the last number
+         */
+        public List<int> CountOfSmallerNumberII(int[] a) {
+            // write your code here
+            List<int> results = new List<int>();
+            if (a == null || a.Length == 0) {
+                return results;
+            }
+        
+            BlockArray blockArray = new BlockArray(10000);
+            for (int i = 0; i < a.Length; i++) {
+                results.Add(blockArray.CountSmaller(a[i]));
+                blockArray.Insert(a[i]);
+            }
+            
+            return results;
+        }
+    }
+}
