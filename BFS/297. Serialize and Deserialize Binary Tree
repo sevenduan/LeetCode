@@ -1,0 +1,88 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left;
+ *     public TreeNode right;
+ *     public TreeNode(int x) { val = x; }
+ * }
+ */
+public class Codec {
+
+    // Encodes a tree to a single string.
+    public string serialize(TreeNode root) {
+        if (root == null)
+            return "{}";
+        
+        List<TreeNode> queue = new List<TreeNode>();
+        queue.Add(root);
+        for (int i = 0; i < queue.Count; i++) {
+            var node = queue[i];
+            if (node == null)
+                continue;
+
+            queue.Add(node.left);
+            queue.Add(node.right);
+        }
+
+        return QueueToString(queue);
+    }
+
+    private string QueueToString(IList<TreeNode> queue) {
+        StringBuilder sb = new StringBuilder();
+        while (queue[queue.Count - 1] == null) {
+            queue.RemoveAt(queue.Count - 1);
+        }
+
+        sb.Append("{");
+        sb.Append(queue[0].val);
+        for (int i = 1; i < queue.Count; i++) {
+            if (queue[i] == null)
+                sb.Append(",#");
+            else {
+                sb.Append(",");
+                sb.Append(queue[i].val);
+            }
+        }
+        sb.Append("}");
+
+        return sb.ToString();
+    }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(string data) {
+        if (data == "{}")
+            return null;
+        
+        var lists = data.Substring(1, data.Length - 2).Split(",");
+        List<TreeNode> queue = new List<TreeNode>(); 
+        TreeNode root = new TreeNode(int.Parse(lists[0]));
+        queue.Add(root);
+        bool isLeftChild = true;
+        int index = 0;
+
+        for (int i = 1; i < lists.Length; i++) {
+            if (lists[i] != "#") {
+                var node  = new TreeNode(int.Parse(lists[i]));
+                if (isLeftChild) {
+                    queue[index].left = node;
+                } else {
+                    queue[index].right = node;
+                }
+                queue.Add(node);
+            }
+
+            if (!isLeftChild) {
+                index++;
+            }
+            isLeftChild = !isLeftChild;
+        }
+
+        return root;
+    }
+}
+
+// Your Codec object will be instantiated and called as such:
+// Codec ser = new Codec();
+// Codec deser = new Codec();
+// TreeNode ans = deser.deserialize(ser.serialize(root));
