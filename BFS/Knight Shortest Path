@@ -1,0 +1,103 @@
+/**
+ * Definition for a point.
+ * public class Point {
+ *     public int x;
+ *     public int y;
+ *     public Point() { x = 0; y = 0; }
+ *     public Point(int a, int b) { x = a; y = b; }
+ * }
+ */
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+        int[] dx = new int[8] {2, 2, -2, -2, 1, 1, -1, -1};
+        int[] dy = new int[8] {1, -1, 1, -1, 2, -2, 2, -2};
+        /**
+         * @param grid: a chessboard included 0 (false) and 1 (true)
+         * @param source: a point
+         * @param destination: a point
+         * @return: the shortest path 
+         */
+        public int ShortestPath(bool[][] grid, Point source, Point destination) {
+            // write your code here
+            if (grid == null || grid.Length == 0)
+                return -1;
+            
+            if (grid[0] == null || grid[0].Length == 0)
+                return -1;
+            
+            if (source.x == destination.x && source.y == destination.y)
+                return 0;
+
+            if (grid[destination.x][destination.y])
+                return -1;
+            
+            Queue<Point> forwardQueue = new Queue<Point>();
+            Queue<Point> backwardQueue = new Queue<Point>();
+            int n = grid.Length;
+            int m = grid[0].Length;
+            bool[,] forwardVisited = new bool[n, m];
+            bool[,] backwardVisited = new bool[n, m];
+
+            forwardQueue.Enqueue(source);
+            forwardVisited[source.x, source.y] = true;
+            backwardQueue.Enqueue(destination);
+            backwardVisited[destination.x, destination.y] = true;
+            int distance = 0;
+
+            while (forwardQueue.Count > 0 && backwardQueue.Count > 0) {
+                distance++;
+                if (ExtendQueue(grid, forwardQueue, forwardVisited, backwardVisited))
+                    return distance;
+                
+                distance++;
+                if (ExtendQueue(grid, backwardQueue, backwardVisited, forwardVisited))
+                    return distance;
+            }
+
+            return -1;
+        }
+
+        private bool ExtendQueue(bool[][] grid, Queue<Point> queue, bool[,] visited, bool[,] oppositeVisited) {
+            int size = queue.Count;
+            for (int i = 0; i < size; i++) {
+                var current = queue.Dequeue();
+                int x = current.x;
+                int y = current.y;
+                for (int j = 0; j < 8; j++) {
+                    int newX = x + dx[j];
+                    int newY = y + dy[j];
+
+                    if (!IsValid(grid, newX, newY))
+                        continue;
+                    
+                    if (visited[newX, newY])
+                        continue;
+
+                    if (oppositeVisited[newX, newY])
+                        return true;
+                    
+                    queue.Enqueue(new Point(newX, newY));
+                    visited[newX, newY] = true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool IsValid(bool[][] grid, int x, int y) {            
+            int n = grid.Length;
+            int m = grid[0].Length;
+
+            if (x < 0 || x >= n || y < 0 || y >= m)
+                return false;
+            
+            return !grid[x][y];
+        }
+    }
+}
