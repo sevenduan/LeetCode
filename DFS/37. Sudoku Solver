@@ -1,0 +1,101 @@
+public class Position {
+    public int X { get; set; }
+    public int Y { get; set; }
+    public List<int> Choices { get; set; }
+
+    // Constructor to initialize the class properties
+    public Position(int x, int y, List<int> choices)
+    {
+        X = x;
+        Y = y;
+        Choices = choices;
+    }
+}
+
+public class Solution {
+    public void SolveSudoku(char[][] board) {
+        bool[,] rowUsed = new bool[9, 10];
+        bool[,] colUsed = new bool[9, 10];
+        bool[,] boxUsed = new bool[9, 10];
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] == '.')
+                    continue;
+
+                int val = board[i][j] - '0';
+                rowUsed[i, val] = true;
+                colUsed[j, val] = true;
+                boxUsed[i / 3 * 3 + j / 3, val] = true;
+            }
+        }
+
+        Dfs(board, rowUsed, colUsed, boxUsed);
+    }
+    
+    private bool Dfs(char[][] board, bool[,] rowUsed, bool[,] colUsed, bool[,] boxUsed) {
+        var position = GetLeastChoicePosition(board, rowUsed, colUsed, boxUsed);
+
+        if (position.X == -1) {
+            return true;
+        }
+
+        int x = position.X;
+        int y = position.Y;
+
+        foreach (var choice in position.Choices) {
+            board[x][y] = choice.ToString()[0];
+            rowUsed[x, choice] = true;
+            colUsed[y, choice] = true;
+            boxUsed[x / 3 * 3 + y / 3, choice] = true;
+            if (Dfs(board, rowUsed, colUsed, boxUsed))
+                return true;
+            
+            board[x][y] = '.';
+            rowUsed[x, choice] = false;
+            colUsed[y, choice] = false;
+            boxUsed[x / 3 * 3 + y / 3, choice] = false;
+        }
+
+        return false;
+    }
+
+    private Position GetLeastChoicePosition(char[][] board, bool[,] rowUsed, bool[,] colUsed, bool[,] boxUsed) {
+        var position = new Position(-1, -1, null);
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] != '.')
+                    continue;
+                
+                var choices = new List<int>();
+                for (int val = 1; val <= 9; val++) {
+                    if (IsValid(board, i, j, val, rowUsed, colUsed, boxUsed)) {
+                        choices.Add(val);
+                    }
+                }
+
+                if (position.Choices == null || choices.Count < position.Choices.Count) {
+                    position.X = i;
+                    position.Y = j;
+                    position.Choices = choices;
+                }
+            }
+        }
+
+        return position;
+    }
+
+    private bool IsValid(char[][] board, int x, int y, int val, bool[,] rowUsed, bool[,] colUsed, bool[,] boxUsed) {
+        if (rowUsed[x, val])
+            return false;
+        
+        if (colUsed[y, val])
+            return false;
+            
+        if (boxUsed[x / 3 * 3 + y / 3, val])
+            return false; 
+
+        return true;
+    }
+}
