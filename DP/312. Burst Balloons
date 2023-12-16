@@ -1,0 +1,32 @@
+public class Solution {
+    public int MaxCoins(int[] nums) {
+        if (nums == null || nums.Length == 0)
+            return 0;        
+
+        int n = nums.Length;
+        int[] arr = new int[n + 2];
+        arr[0] = 1;
+        arr[n + 1] = 1;
+        for (int i = 0; i < n; i++) {
+            arr[i + 1] = nums[i];
+        }
+        int m = n + 2;
+
+        int[,] dp = new int[m, m];
+        // dp[i, j] = all points exclude i, j
+
+        for (int len = 3; len < m + 1; len++) {
+            for (int i = 0; i < m - len + 1; i++) {
+                int j = i + len - 1;
+                for (int k = i + 1; k < j; k++) {
+                    dp[i, j] = Math.Max(
+                        dp[i, j],
+                        dp[i, k] + dp[k, j] + arr[i] * arr[k] * arr[j]
+                    );
+                }
+            }
+        }
+
+        return dp[0, m - 1];
+    }
+}

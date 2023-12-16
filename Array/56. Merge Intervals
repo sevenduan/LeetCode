@@ -1,0 +1,26 @@
+public class Solution {
+    public int[][] Merge(int[][] intervals) {
+        if (intervals == null || intervals.Length == 0)
+        {
+            return intervals;
+        }
+
+        Array.Sort(intervals, (a, b) => a[0].CompareTo(b[0]));
+
+        List<int[]> results = new List<int[]>();
+
+        var last = intervals[0];
+        for (int i = 1; i < intervals.Length; i++) {
+            var curr = intervals[i];
+            if (curr[0] <= last[1]) {
+                last[1] = Math.Max(curr[1], last[1]);
+            } else {
+                results.Add(last.ToArray());
+                last = curr;
+            }
+        }
+
+        results.Add(last.ToArray());
+        return results.ToArray();
+    }
+}

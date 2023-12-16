@@ -1,0 +1,73 @@
+/**
+ * Definition of Interval:
+ * public class Interval {
+ *     public int start, end;
+ *     Interval(int start, int end) {
+ *         this.start = start;
+ *         this.end = end;
+ *     }
+ * }
+ */
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+        /**
+         * @param list1: one of the given list
+         * @param list2: another list
+         * @return: the new sorted list of interval
+         */
+        public List<Interval> MergeTwoInterval(List<Interval> list1, List<Interval> list2) {
+            // write your code here
+            if (list1 == null || list1.Count == 0)
+                return list2;
+
+            if (list2 == null || list2.Count == 0)
+                return list2;
+            
+            List<Interval> result = new List<Interval>();
+            int i = 0;
+            int j = 0;
+
+            while (i < list1.Count && j < list2.Count) {
+                if (list1[i].start <= list2[j].start) {
+                    Merge(result, list1[i]);
+                    i++;
+                } else {
+                    Merge(result, list2[j]);
+                    j++;
+                }
+            }
+
+            while (i < list1.Count) {
+                Merge(result, list1[i]);
+                i++;
+            }
+
+            while (j < list2.Count) {
+                Merge(result, list2[j]);
+                j++;
+            }
+
+            return result;
+        }
+
+        private void Merge(List<Interval> result, Interval interval) {
+            if (result.Count == 0) {
+                result.Add(interval);
+                return;
+            }
+
+            var last = result[result.Count - 1];
+            if (interval.start <= last.end) {
+                last.end = Math.Max(interval.end, last.end);
+            } else {
+                result.Add(interval);
+            }
+        }
+    }
+}

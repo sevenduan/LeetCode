@@ -1,0 +1,120 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+// brutal: O( k * n^2)
+
+namespace lintcode
+{
+    class Solution {
+        /**
+         * @param a: a sparse matrix
+         * @param b: a sparse matrix
+         * @return: the result of A * B
+         */
+        public int[][] Multiply(int[][] a, int[][] b) {
+            // write your code here
+
+            if (a == null || a.Length == 0)
+                return a;
+
+            if (b == null || b.Length == 0)
+                return b;
+            
+            int n = a.Length;
+            int m = a[0].Length;
+            int k = b[0].Length;
+
+
+            int[][] result = new int [n][];
+
+            for (int i = 0; i < n; i++) {
+                result[i] = new int[k]; 
+                for (int j = 0; j < m; j++) {
+                    if (a[i][j] != 0) {
+                        for (int l = 0; l < k; l++) {
+                            result[i][l] += a[i][j] * b[j][l];
+                        }
+                    }
+                }
+            }
+
+            return result;
+        } 
+    }
+}
+
+// another way O(m n + n k + l)
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    public class Element {
+        public int row;
+        public int column;
+        public int val;
+        
+        public Element(int row, int column, int val) {
+            this.row = row;
+            this.column = column;
+            this.val = val;
+        }
+    }
+
+    class Solution {
+        /**
+         * @param a: a sparse matrix
+         * @param b: a sparse matrix
+         * @return: the result of A * B
+         */
+        public int[][] Multiply(int[][] a, int[][] b) {
+            // write your code here
+
+            if (a == null || a.Length == 0)
+                return a;
+
+            if (b == null || b.Length == 0)
+                return b;
+            
+            int n = a.Length;
+            int m = a[0].Length;
+            int k = b[0].Length;
+
+            var matrixA = GetNonZeroItems(a);
+            var matrixB = GetNonZeroItems(b);
+            int[][] result = new int[n][];
+            for (int i = 0; i < n; i++) {
+                result[i] = new int[k];
+            }
+
+
+            for (int i = 0; i < matrixA.Count; i++) {
+                for (int j = 0; j < matrixB.Count; j++) {
+                    var elementA = matrixA[i];
+                    var elementB = matrixB[j];
+                    if (elementA.column == elementB.row) {
+                        result[elementA.row][elementB.column] += elementA.val * elementB.val;
+                    } 
+                }
+            }
+            
+            return result;
+        }
+
+        private List<Element> GetNonZeroItems(int[][] a) {
+            List<Element> result = new List<Element>();
+
+            for (int i = 0; i < a.Length; i++) {
+                for (int j = 0; j < a[0].Length; j++) {
+                    if (a[i][j] == 0)
+                        continue;
+
+                    result.Add(new Element(i, j, a[i][j]));
+                }
+            }
+            return result;
+        }
+    }
+}
