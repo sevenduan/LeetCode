@@ -36,3 +36,41 @@ public class SolutionMinDistance {
         return f[m, n];
     }
 }
+
+
+// rolling array
+public class SolutionMinDistanceRolling {
+    public int MinDistance(string word1, string word2) {        
+        if (string.IsNullOrEmpty(word1) && string.IsNullOrEmpty(word2))
+            return 0;
+        
+        if (string.IsNullOrEmpty(word1))
+            return word2.Length;
+        
+        if (string.IsNullOrEmpty(word2))
+            return word1.Length;
+        
+        int n = word1.Length;
+        int m = word2.Length;
+        int[,] dp = new int[n + 1, m + 1];
+
+        for (int j = 0; j <= m; j++) {
+            dp[0, j] = j;
+        }
+
+        for (int i = 1; i <= n; i++) {
+            dp [i % 2, 0] = i;
+            for (int j = 1; j <=m; j++) {
+                dp[i % 2, j] = Math.Min(dp[(i - 1) % 2, j], dp[i % 2, j - 1]) + 1;
+
+                if (word1[i - 1] == word2[j - 1]) {
+                    dp[i % 2, j] = Math.Min(dp[i % 2, j], dp[(i - 1) % 2, j - 1]);
+                } else {
+                    dp[i % 2, j] = Math.Min(dp[i % 2, j], dp[(i - 1) % 2, j - 1] + 1);
+                }
+            }
+        }
+
+        return dp[n % 2, m];
+    }
+}

@@ -1,0 +1,69 @@
+public class Info
+{
+    public string Food { get; set; }
+    public string Cuisine {get; set;}
+    public int Rating { get; set; }
+    public int Index { get; set; }
+
+    public Info(string food, string cuisine, int rating, int index)
+    {
+        this.Food = food;
+        this.Cuisine = cuisine;
+        this.Rating = rating;
+        this.Index = index;
+    }
+}
+
+public class FoodRatings {
+    private Dictionary<string, Info> foodMap;
+    private Dictionary<string, PriorityQueue<Info, (int, string)>> cuisineMap;
+    private int[] ratings;
+
+    public FoodRatings(string[] foods, string[] cuisines, int[] ratings) {
+        this.ratings = ratings;
+        foodMap = new Dictionary<string, Info>();
+        cuisineMap = new Dictionary<string, PriorityQueue<Info, (int, string)>>();
+
+        for (int i = 0; i < foods.Length; i++) {
+            var info = new Info(foods[i], cuisines[i], ratings[i], i);
+            foodMap[foods[i]] = info;
+            if (!cuisineMap.ContainsKey(cuisines[i])) {
+                cuisineMap[cuisines[i]] = new PriorityQueue<Info, (int, string)>();
+            }
+            cuisineMap[cuisines[i]].Enqueue(info, (-ratings[i], foods[i]));
+        }
+    }
+    
+    public void ChangeRating(string food, int newRating) {
+        if (!foodMap.ContainsKey(food))
+            return;
+
+        var info = foodMap[food];
+        var index = info.Index;
+        ratings[index] = newRating;
+        var queue = cuisineMap[info.Cuisine];
+
+        var newInfo = new Info(food, info.Cuisine, newRating, index);
+        queue.Enqueue(newInfo, (-newRating, food));     
+    }
+    
+    public string HighestRated(string cuisine) {
+        if (!cuisineMap.ContainsKey(cuisine))
+            return null;
+        
+        var queue = cuisineMap[cuisine];
+        var peek = queue.Peek();
+        while (peek.Rating != ratings[peek.Index]) {
+            queue.Dequeue();
+            peek = queue.Peek();
+        }
+        return peek.Food;
+    }
+}
+
+/**
+ * Your FoodRatings object will be instantiated and called as such:
+ * FoodRatings obj = new FoodRatings(foods, cuisines, ratings);
+ * obj.ChangeRating(food,newRating);
+ * string param_2 = obj.HighestRated(cuisine);
+ */

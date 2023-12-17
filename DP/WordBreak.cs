@@ -21,7 +21,6 @@ public class SolutionWordBreak {
         HashSet<string> dict = new HashSet<string>(wordDict);
 
         for (int i = 1; i <= n; i++) {
-            f[i] = false;
             for (int j = 1; j <= maxLength && j <= i; j++) {
                 if (!f[i - j])
                     continue;
