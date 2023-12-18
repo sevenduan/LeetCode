@@ -1,0 +1,64 @@
+public class Solution {
+    public int NumDecodings(string s) {
+        if (string.IsNullOrEmpty(s))
+            return 0;
+        
+        int n = s.Length;
+        int[] dp = new int[n + 1];
+        dp[0] = 1;
+        dp[1] = DecodeOk(s.Substring(0, 1));
+
+        for (int i = 2; i <= n; i++) {
+            dp[i] = dp[i - 2] * DecodeOk(s.Substring(i - 2, 2)) + 
+                    dp[i - 1] * DecodeOk(s.Substring(i - 1, 1));
+        }
+
+        return dp[n];
+    }
+
+    private int DecodeOk(string s) {
+        int len = s.Length;
+        int code = int.Parse(s);
+        if (len == 1 && code >= 1 && code <= 9) {
+            return 1;
+        }
+        if (len == 2 && code >= 10 && code <= 26) {
+            return 1;
+        }
+
+        return 0;
+    }
+}
+
+// Rolling Array
+public class Solution {
+    public int NumDecodings(string s) {
+        if (string.IsNullOrEmpty(s))
+            return 0;
+        
+        int n = s.Length;
+        int[] dp = new int[3];
+        dp[0] = 1;
+        dp[1] = DecodeOk(s.Substring(0, 1));
+
+        for (int i = 2; i <= n; i++) {
+            dp[i % 3] = dp[(i - 2) % 3] * DecodeOk(s.Substring(i - 2, 2)) + 
+                    dp[(i - 1) % 3] * DecodeOk(s.Substring(i - 1, 1));
+        }
+
+        return dp[n % 3];
+    }
+
+    private int DecodeOk(string s) {
+        int len = s.Length;
+        int code = int.Parse(s);
+        if (len == 1 && code >= 1 && code <= 9) {
+            return 1;
+        }
+        if (len == 2 && code >= 10 && code <= 26) {
+            return 1;
+        }
+
+        return 0;
+    }
+}
