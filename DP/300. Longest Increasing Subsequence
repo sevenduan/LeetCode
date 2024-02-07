@@ -1,0 +1,38 @@
+public class Solution {
+    public int LengthOfLIS(int[] nums) {
+        if (nums == null || nums.Length == 0)
+            return 0;
+        
+        int[] lis = new int[nums.Length + 1];
+        lis[0] = int.MinValue;
+
+        for (int i = 1; i < lis.Length; i++)
+            lis[i] = int.MaxValue;
+        
+        int longest = 0;
+        for (int i = 0; i < nums.Length; i++) {
+            int index = FirstGTE(lis, nums[i]);
+            lis[index] = nums[i];
+            longest = Math.Max(longest, index);
+        }
+
+        return longest;
+    }
+
+
+    private int FirstGTE(int[] arr, int target) {
+        int start = 0, end = arr.Length - 1;
+        while (start + 1 < end) {
+            int mid = start + (end - start) / 2;
+            if (arr[mid] >= target)
+                end = mid;
+            else
+                start = mid;
+        }
+
+        if (arr[start] >= target)
+            return start;
+
+        return end;
+    }
+}

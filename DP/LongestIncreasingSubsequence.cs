@@ -3,12 +3,13 @@ public class SolutionLengthOfLIS {
         if (nums == null || nums.Length == 0) {
             return 0;
         }
-        int[] f = new int[nums.Length];
+        int n = nums.Length;
+        int[] f = new int[n];
         //f[i]= jump in any position = 1;
         //function
         // f[i] = max(f[j] + 1, f[i]) j<i && nums[j] < nums[i]
 
-        for (int i = 0; i < nums.Length; i++) {
+        for (int i = 0; i < n; i++) {
             f[i] = 1;
             for (int j = 0; j < i; j++) {
                 if(nums[j] < nums[i]) {
@@ -18,7 +19,7 @@ public class SolutionLengthOfLIS {
         }
 
         int best = 0;
-        for (int i = 0; i < nums.Length; i++) {
+        for (int i = 0; i < n; i++) {
             best = Math.Max(best, f[i]);
         }
 
