@@ -1,0 +1,45 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+        /**
+         * @param s: a string
+         * @param k: an integer
+         * @return: the number of substrings there are that contain at least k distinct characters
+         */
+        public long KDistinctCharacters(string s, int k) {
+            // Write your code here
+            if (s == null || s.Length == 0)
+                return 0;
+            
+            int n = s.Length;
+            Dictionary<char, int> map = new Dictionary<char, int>();
+            int differentChars = 0;
+            long answer = 0;
+            int j = 0;
+            for (int i = 0; i < n; i++) {
+                while (j < n && differentChars < k) {
+                    if (map.ContainsKey(s[j])) {
+                        map[s[j]]++;
+                    } else {
+                        map[s[j]] = 1;
+                    }
+                    if (map[s[j]] == 1)
+                        differentChars++;
+                    j++;
+                }
+                if (differentChars == k) {
+                    answer += n - j + 1;
+                }
+                map[s[i]]--;
+                if (map[s[i]] == 0)
+                    differentChars--;
+            }
+
+            return answer;
+        }
+    }
+}

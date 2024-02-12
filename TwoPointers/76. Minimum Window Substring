@@ -1,0 +1,49 @@
+public class Solution {
+    public string MinWindow(string s, string t) {
+        if (s == null || s.Length == 0)
+            return "";
+        
+        if (t == null || t.Length == 0)
+            return "";
+        
+        int n = s.Length;
+        Dictionary<char, int> targetCount = new Dictionary<char, int>();
+        Dictionary<char, int> subCount = new Dictionary<char, int>();
+
+        for (int i = 0 ; i < t.Length; i++) {
+            if (targetCount.ContainsKey(t[i]))
+                targetCount[t[i]]++;
+            else 
+                targetCount[t[i]] = 1;            
+        }
+
+        int j = 0;
+        int matchedChars = 0;
+        int length = int.MaxValue;
+        int start = 0;
+        for (int i = 0; i < s.Length; i++) {
+            while (j < n && matchedChars < targetCount.Count) {
+                if (subCount.ContainsKey(s[j]))
+                    subCount[s[j]]++;
+                else
+                    subCount[s[j]] = 1;
+                
+                if (targetCount.ContainsKey(s[j]) && subCount[s[j]] == targetCount[s[j]])
+                    matchedChars++;
+                j++;
+            }
+
+            if (matchedChars == targetCount.Count) {
+                if (length > j - i) {
+                    length = j - i;
+                    start = i;
+                }
+            }
+            subCount[s[i]]--;
+            if (targetCount.ContainsKey(s[i]) && subCount[s[i]] == targetCount[s[i]] - 1)
+                    matchedChars--;
+        }
+
+        return length == int.MaxValue ? "" : s.Substring(start, length);
+    }
+}
