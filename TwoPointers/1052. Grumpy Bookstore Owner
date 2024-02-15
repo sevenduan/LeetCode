@@ -1,0 +1,29 @@
+public class Solution {
+    public int MaxSatisfied(int[] customers, int[] grumpy, int minutes) {
+        int n = customers.Length;
+        int sum = 0;
+        for (int i = 0; i < n; i++) {
+            if (i < minutes)
+                sum += customers[i];
+            else
+                sum += (1 - grumpy[i]) * customers[i];
+        }
+
+        int left = 0;
+        int right = minutes;
+        int result = sum;
+        while (right < n) {
+            if (grumpy[right] == 1)
+                sum += customers[right];
+            
+            if (grumpy[left] == 1)
+                sum -= customers[left];
+
+            result = Math.Max(result, sum);
+            left++;
+            right++;
+        }
+
+        return result;
+    }
+}
