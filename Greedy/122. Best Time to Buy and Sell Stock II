@@ -1,0 +1,18 @@
+public class Solution {
+    public int MaxProfit(int[] prices) {
+        if (prices == null || prices.Length == 0)
+            return 0;
+
+        int n = prices.Length;
+        int max = 0;
+        int pre = prices[0];
+
+        for (int i = 0; i < n; i++) {
+            if (prices[i] > pre)
+                max += prices[i] - pre;
+            
+            pre = prices[i];
+        }
+        return max;
+    }
+}

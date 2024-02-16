@@ -1,0 +1,51 @@
+public class Solution {
+    public int MaxProfit(int[] prices) {        
+        if (prices == null || prices.Length == 0)
+            return 0;
+
+        int n = prices.Length;
+        int max = 0;
+
+        for (int i = 0; i < n; i++) {
+            int left = GetMaxProfit(prices, 0, i);
+            int right = GetMaxProfit(prices, i, n);
+            max = Math.Max(max, left + right);
+        }
+        
+        return max;
+    }
+
+    private int GetMaxProfit(int[] prices, int start, int end) {
+        int min = int.MaxValue;
+        int max = 0;
+        for (int i = start; i < end; i++) {
+            min = Math.Min(min, prices[i]);
+            max = Math.Max(max, prices[i] - min);
+        }
+
+        return max;
+    }
+}
+
+DP
+
+public class Solution {
+    public int MaxProfit(int[] prices) {        
+        if (prices == null || prices.Length == 0)
+            return 0;
+
+        int n = prices.Length;
+
+        int[,] dp = new int[3, n];
+
+        for (int i = 1; i < 3; i++) {
+            int maxDiff = -prices[0];
+            for (int j = 1; j < n; j ++){              
+                maxDiff = Math.Max(maxDiff, dp[i - 1, j - 1] - prices[j]);
+                dp[i, j] = Math.Max(dp[i, j - 1], prices[j] + maxDiff);
+            }
+        }
+        
+        return dp[2, n - 1];
+    }
+}
