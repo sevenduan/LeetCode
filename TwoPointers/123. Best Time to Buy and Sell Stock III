@@ -48,4 +48,28 @@ public class Solution {
         
         return dp[2, n - 1];
     }
+
+    public class Solution {
+    public int MaxProfit(int[] prices) {        
+        if (prices == null || prices.Length == 0)
+            return 0;
+
+        int n = prices.Length;
+
+        int[] dp = new int[4];
+        dp[0] = int.MinValue; // buy
+        dp[1] = 0; // sell
+        dp[2] = int.MinValue; // buy
+        dp[3] = 0; // sell
+         
+        for (int i = 0; i < n; i++){              
+            dp[3] = Math.Max(dp[3], dp[2] + prices[i]);
+            dp[2] = Math.Max(dp[2], dp[1] - prices[i]);
+            dp[1] = Math.Max(dp[1], dp[0] + prices[i]);
+            dp[0] = Math.Max(dp[0], -prices[i]);
+        }
+        
+        return Math.Max(dp[1], dp[3]);
+    }
+}
 }
