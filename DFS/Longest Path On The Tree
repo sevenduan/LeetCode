@@ -1,0 +1,76 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+        /**
+         * @param n: The number of nodes
+         * @param starts: One point of the edge
+         * @param ends: Another point of the edge
+         * @param lens: The length of the edge
+         * @return: Return the length of longest path on the tree.
+         */
+        public int LongestPath(int n, int[] starts, int[] ends, int[] lens) {
+            // Write your code here
+            var graph = BuildGraph(n, starts, ends, lens);
+
+            return Dfs(0, -1, graph).longestPath;
+        }
+
+        private (int longestChain, int longestPath) Dfs (int root, int parent, Dictionary<int, Dictionary<int, int>> graph) {
+            int longestChain = 0;
+            int longestPath = 0;
+
+            int childLongestChain = 0;
+            int childLongerChain = 0;
+            
+            foreach (var item in graph[root]) {
+
+                int neighbor = item.Key; // Get the neighboring node
+                int dist = item.Value;     // Get the weight of the edge
+
+                if (neighbor == parent)
+                    continue;
+
+                var (childChain, childPath) = Dfs(neighbor, root, graph);
+                childChain += dist;
+
+                longestPath = Math.Max(longestPath, childPath);
+                longestChain = Math.Max(longestChain, childChain);
+                
+                (childLongestChain, childLongerChain) = GetLargestLarger(childLongestChain, childLongerChain, childChain);
+
+
+            }
+
+            longestPath = Math.Max(longestPath, childLongestChain + childLongerChain);
+            
+            return (longestChain, longestPath);
+        }
+
+        public (int largest, int larger) GetLargestLarger(int a, int b, int c)
+        {
+            int largest = Math.Max(a, Math.Max(b, c));
+            int third = Math.Min(a, Math.Min(b, c));
+            int larger = a - largest + b - third + c;
+            return (largest, larger);
+        }
+
+        private Dictionary<int, Dictionary<int, int>> BuildGraph(int n, int[] starts, int[] ends, int[] lens) {
+            Dictionary<int, Dictionary<int, int>> graph = new Dictionary<int, Dictionary<int, int>>();
+            for (int i = 0; i < n - 1; i++) {
+                if (!graph.ContainsKey(starts[i])) {
+                    graph[starts[i]] = new Dictionary<int, int>();
+                }
+                if (!graph.ContainsKey(ends[i])) {
+                    graph[ends[i]] = new Dictionary<int, int>();
+                }
+                graph[starts[i]][ends[i]] = lens[i];
+                graph[ends[i]][starts[i]] = lens[i];
+            }
+            return graph;
+        }
+    }
+}
