@@ -1,0 +1,93 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+        private class MazeType {
+            public static int Wall = 1;
+            public static int Space = 0;
+        }
+
+        private int[] deltaX = {0, 1, -1, 0};
+        private int[] deltaY = {1, 0, 0, -1};
+
+        /**
+         * @param maze: the maze
+         * @param start: the start
+         * @param destination: the destination
+         * @return: whether the ball could stop at the destination
+         */
+        public bool HasPath(int[][] maze, int[] start, int[] destination) {
+            // write your code here
+            if (maze == null || maze.Length == 0)
+                return false;
+            
+            if (maze[0] == null || maze.Length == 0)
+                return false;
+
+            return Bfs(maze, start, destination);
+        }
+
+        private bool Bfs(int[][] maze, int[] start, int[] destination) {
+            int m = maze[0].Length;
+            int begin = start[0] * m + start[1];
+
+            Queue<int> queue = new Queue<int>();
+            HashSet<int> visited = new HashSet<int>();
+            queue.Enqueue(begin);
+            visited.Add(begin);
+
+            while (queue.Count > 0) {
+                var current = queue.Dequeue();
+                int x = current / m;
+                int y = current % m; 
+                if (IsDestination(x, y, destination))
+                    return true;
+                
+                for (int direction = 0; direction < 4; direction++) {
+                    int next = KickBall(x, y, direction, maze, destination);
+
+                    if (visited.Contains(next))
+                        continue;
+
+                    queue.Enqueue(next);
+                    visited.Add(next);
+                }
+            }
+
+            return false;
+        }
+
+        private int KickBall(int x, int y, int direction, int[][] maze) {
+            int m = maze[0].Length;
+            int newX = x + deltaX[direction];
+            int newY = y + deltaY[direction];
+
+            while (IsValid(newX, newY, maze)) {
+                newX += deltaX[direction];
+                newY += deltaY[direction];
+            }
+
+            newX -= deltaX[direction];
+            newY -= deltaY[direction];
+
+            return newX * m + newY;
+        }
+
+        private bool IsDestination(int x, int y, int[] destination) {
+            return x == destination[0] && y == destination[1];
+        }
+
+        private bool IsValid(int x, int y, int[][] maze) {
+            int n = maze.Length;
+            int m = maze[0].Length;
+
+            if (x >= 0 && x < n && y >= 0 && y < m)
+                return maze[x][y] == MazeType.Space;
+            
+            return false;
+        }
+    }
+}

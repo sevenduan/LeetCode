@@ -23,8 +23,97 @@ namespace lintcode
                 return -1;
             
             if (grid[0] == null || grid[0].Length == 0)
-                return -1;
-            
+                return -1;            
+
+            int houses = 0;
+            int empties = 0;
+            for (int i = 0; i < grid.Length; i++) {
+                for (int j = 0; j < grid[0].Length; j++) {
+                    if (grid[i][j] == house)
+                        houses++;
+                    if (grid[i][j] == empty)
+                        empties++;
+                }
+            }
+
+            if (houses < empties) {
+                return FindShortByHouse(grid, houses);
+            } else {
+                return FindShortByEmpty(grid);
+            }
+        }
+
+        private int FindShortByHouse(int[][] grid, int houses) {
+            int n = grid.Length;
+            int m = grid[0].Length;
+            Dictionary<int, int> distanceSum = new Dictionary<int, int>();
+            Dictionary<int, int> reachableCount = new Dictionary<int, int>();
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < m; j++) {
+                    if (grid[i][j] == house) {
+                        Bfs(grid, i, j, distanceSum, reachableCount);
+                    }
+                }
+            }
+
+            for (int i = 0; i < grid.Length; i++) {
+                for (int j = 0; j < grid[0].Length; j++) {
+                    int index = i * m + j;
+                    if (!reachableCount.ContainsKey(index))
+                        continue;
+
+                    if (reachableCount[index] != houses)
+                        continue;
+                        
+                    minDistance = Math.Min(minDistance, distanceSum[index]);
+                }
+            }
+
+            return minDistance == int.MaxValue ? -1 : minDistance;
+        }
+
+        private void Bfs(int[][] grid, int i, int j, Dictionary<int, int> distanceSum, Dictionary<int, int> reachableCount) {
+            int n = grid.Length;
+            int m = grid[0].Length;
+            Dictionary<int, int> distances = new Dictionary<int, int>();
+            Queue<int> queue = new Queue<int>();
+            queue.Enqueue(i * m + j);
+            distances[i * m + j] = 0;
+
+            while (queue.Count > 0) {
+                var current = queue.Dequeue();
+                var x = current / m;
+                var y = current % m;
+
+                for (int d = 0; d < 4; d++) {
+                    var newX = x + deltaX[d];
+                    var newY = y + deltaY[d];
+
+                    if (!IsValid(newX, newY, grid))
+                        continue;
+                    
+                    if (grid[newX][newY] == house)
+                        continue;
+
+                    var next = newX * m + newY;
+                    if (distances.ContainsKey(next))
+                        continue;
+
+                    queue.Enqueue(next);
+                    distances[next] = distances[current] + 1;
+
+                    if (!reachableCount.ContainsKey(next)) {
+                        reachableCount[next] = 0;
+                        distanceSum[next] = 0;
+                    }
+
+                    distanceSum[next] = distanceSum[next] + distances[next];
+                    reachableCount[next]++;
+                }
+            }
+        }
+
+        private int FindShortByEmpty(int[][] grid) {
             // BFS
             for (int i = 0; i < grid.Length; i++) {
                 for (int j = 0; j < grid[0].Length; j++) {
