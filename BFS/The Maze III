@@ -1,0 +1,124 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+        private class Pair {
+            public int Dist {get; set;}
+            public string Path {get; set;}
+
+            public Pair(int dist, string path) {
+                this.Dist = dist;
+                this.Path = path;
+            }
+
+            public bool IsLessThanOrEqualTo(Pair to) {
+                if (this.Dist != to.Dist)
+                    return this.Dist < to.Dist;
+
+                return this.Path.CompareTo(to.Path) <= 0;
+            }
+        }
+
+        private class MazeType
+        {
+            public static int Wall = 1;
+            public static int Space = 0;
+        }
+
+        int[] dx = { 0, 0, -1, 1 };
+        int[] dy = { 1, -1, 0, 0 };
+        string[] hash = {"r", "l", "u", "d"};
+
+        /**
+         * @param maze: the maze
+         * @param ball: the ball position
+         * @param hole: the hole position
+         * @return: the lexicographically smallest way
+         */
+        public string FindShortestWay(int[][] maze, int[] ball, int[] hole) {
+            // write your code here
+            if (maze == null || maze.Length == 0)
+                return "impossible";
+            
+            if (maze[0] == null || maze.Length == 0)
+                return "impossible";
+
+            return Bfs(maze, ball, hole);
+        }
+
+        private string Bfs(int[][] maze, int[] ball, int[] hole) {
+            int n = maze.Length;
+            int m = maze[0].Length;
+            Queue<int> queue = new Queue<int>();
+            Dictionary<int, Pair> distance = new Dictionary<int, Pair>();
+            int begin = ball[0] * m + ball[1];
+
+            queue.Enqueue(begin);
+            distance[begin] = new Pair(0, "");
+
+            while (queue.Count > 0)
+            {
+                var cur = queue.Dequeue();
+                int x = cur / m;
+                int y = cur % m;
+                
+                for (int d = 0; d < 4; d++)
+                {
+                    var (nx, ny, len) = KickBall(x, y, d, hole, maze);
+                    int next = nx * m + ny;
+                    int nextLen = distance[cur].Dist + len;
+                    string nextPath = distance[cur].Path + hash[d];
+                    if (distance.ContainsKey(next)) {
+                        if (distance[next].IsLessThanOrEqualTo(new Pair(nextLen, nextPath))) {
+                            continue;
+                        }
+                    }
+                    queue.Enqueue(next);
+                    distance[next] = new Pair(nextLen, nextPath);
+                }
+            }
+
+            int desination = hole[0] * m + hole[1];
+            if (distance.ContainsKey(desination))
+                return distance[desination].Path;
+            
+            return "impossible";
+        }
+
+        private (int, int, int) KickBall(int x, int y, int direction, int[] hole, int[][] maze)
+        {
+            int len = 0;
+            while (!IsHole(x, y, hole) && IsSpace(x, y, maze))
+            {
+                x += dx[direction];
+                y += dy[direction];
+                len++;
+            }
+
+            if (IsHole(x, y, hole)) {
+                return (x, y, len);
+            }
+
+            x -= dx[direction];
+            y -= dy[direction];
+            len--;
+            return (x, y, len);
+        }
+
+        private bool IsHole(int x, int y, int[] hole) {
+            return x == hole[0] && y == hole[1];
+        }
+
+        private bool IsSpace(int x, int y, int[][] maze) {
+            int n = maze.Length;
+            int m = maze[0].Length;
+            if (x >= 0 && x < n && y >= 0 && y < m && maze[x][y] == MazeType.Space)
+                return true;
+            
+            return false;
+        }
+    }
+}

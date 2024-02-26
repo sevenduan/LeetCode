@@ -17,29 +17,36 @@ public class Solution
         int n = maze.Length;
         int m = maze[0].Length;
 
-        PriorityQueue<Posn> queue = new PriorityQueue<Posn>((p1, p2) => p1.Len - p2.Len);
-        queue.Enqueue(new Posn(start[0], start[1], 0));
-        bool[] visit = new bool[m * n];
+        Queue<int> queue = new Queue<int>();
+        int begin = start[0] * m + start[1];
+
+        queue.Enqueue(begin);
+        Dictionary<int, int> distance = new Dictionary<int, int>();
+        distance[begin] = 0;
+        int dest = destination[0] * m + destination[1];
 
         while (queue.Count > 0)
         {
-            Posn cur = queue.Dequeue();
-            int x = cur.X;
-            int y = cur.Y;
-            if (x == destination[0] && y == destination[1])
-                return cur.Len;
-
-            if (visit[x * m + y])
-            {
-                continue;
-            }
-            visit[x * m + y] = true;
+            var cur = queue.Dequeue();
+            int x = cur / m;
+            int y = cur % m;
+            
             for (int d = 0; d < 4; d++)
             {
                 var (nx, ny, len) = KickBall(x, y, d, maze);
-                queue.Enqueue(new Posn(nx, ny, cur.Len + len));
+                int next = nx * m + ny;
+                int nextLen = distance[cur] + len;
+                if (distance.ContainsKey(next) && distance[next] <= nextLen)
+                    continue;
+
+                queue.Enqueue(next);
+                distance[next] = nextLen;
             }
         }
+
+        if (distance.ContainsKey(dest))
+            return distance[dest];
+
         return -1;
     }
 
@@ -47,96 +54,17 @@ public class Solution
     {
         int n = maze.Length;
         int m = maze[0].Length;
-        int nx = x + dx[direction];
-        int ny = y + dy[direction];
-        int len = 1;
-        while (nx >= 0 && nx < n && ny >= 0 && ny < m && maze[nx][ny] == MazeType.Space)
+        int len = 0;
+        while (x >= 0 && x < n && y >= 0 && y < m && maze[x][y] == MazeType.Space)
         {
-            nx += dx[direction];
-            ny += dy[direction];
+            x += dx[direction];
+            y += dy[direction];
             len++;
         }
+        x -= dx[direction];
+        y -= dy[direction];
         len--;
-        nx -= dx[direction];
-        ny -= dy[direction];
-        return (nx, ny, len);
-    }
-
-
-}
-
-public class Posn
-{
-    public int X { get; }
-    public int Y { get; }
-    public int Len { get; }
-
-    public Posn(int x, int y, int len)
-    {
-        X = x;
-        Y = y;
-        Len = len;
+        return (x, y, len);
     }
 }
 
-public class PriorityQueue<T>
-{
-    private List<T> data;
-    private Comparison<T> comparison;
-
-    public PriorityQueue(Comparison<T> comparison)
-    {
-        this.data = new List<T>();
-        this.comparison = comparison;
-    }
-
-    public int Count => data.Count;
-
-    public void Enqueue(T item)
-    {
-        data.Add(item);
-        int ci = data.Count - 1;
-        while (ci > 0 && comparison(data[ci], data[Parent(ci)]) < 0)
-        {
-            Swap(ci, Parent(ci));
-            ci = Parent(ci);
-        }
-    }
-
-    public T Dequeue()
-    {
-        if (data.Count <= 0)
-            throw new InvalidOperationException("Queue is empty");
-        T frontItem = data[0];
-        data[0] = data[data.Count - 1];
-        data.RemoveAt(data.Count - 1);
-
-        int ci = 0;
-        while (ci < data.Count)
-        {
-            int leftChildIndex = LeftChild(ci);
-            int rightChildIndex = RightChild(ci);
-            if (leftChildIndex >= data.Count)
-                break;
-            int minIndex = leftChildIndex;
-            if (rightChildIndex < data.Count && comparison(data[rightChildIndex], data[leftChildIndex]) < 0)
-                minIndex = rightChildIndex;
-            if (comparison(data[ci], data[minIndex]) <= 0)
-                break;
-            Swap(ci, minIndex);
-            ci = minIndex;
-        }
-        return frontItem;
-    }
-
-    private void Swap(int i, int j)
-    {
-        T tmp = data[i];
-        data[i] = data[j];
-        data[j] = tmp;
-    }
-
-    private int Parent(int i) => (i - 1) / 2;
-    private int LeftChild(int i) => 2 * i + 1;
-    private int RightChild(int i) => 2 * i + 2;
-}
