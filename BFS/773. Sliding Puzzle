@@ -1,0 +1,99 @@
+public class Solution {
+    public int SlidingPuzzle(int[][] board) {
+        if (board == null || board.Length == 0)
+            return -1;
+        
+        if (board[0] == null || board[0].Length == 0)
+            return -1;
+        
+        
+        var start = BuildStart(board);
+        if (start == "123450")
+            return 0;
+
+        return Bfs(board, start);
+    }
+
+    private int Bfs(int[][] board, string start) {
+        Queue<string> fQueue = new Queue<string>();
+        HashSet<string> fSet = new HashSet<string>();
+        fQueue.Enqueue(start);
+        fSet.Add(start);
+
+        var target = "123450";
+        var bQueue = new Queue<string>();
+        var bSet = new HashSet<string>();
+        bQueue.Enqueue(target);
+        bSet.Add(target);
+
+        int step = 0;
+
+        while (fQueue.Count > 0 && bQueue.Count > 0) {
+            step++;
+            if (ExtendQueue(fQueue, fSet, bSet))
+                return step;
+
+            step++;
+            if (ExtendQueue(bQueue, bSet, fSet))
+                return step;
+        }
+
+        return -1;
+    }
+
+    private bool ExtendQueue(Queue<string> queue, HashSet<string> visited, HashSet<string> target) {
+        int size = queue.Count;
+        for (int i = 0; i < size; i++) {
+            var cur = queue.Dequeue();
+            foreach (var next in GetNext(cur)) {
+                if (visited.Contains(next))
+                    continue;
+                
+                if (target.Contains(next))
+                    return true;
+                
+                queue.Enqueue(next);
+                visited.Add(next);
+            }
+        }
+        return false;
+    }
+
+    private List<string> GetNext(string state) {
+        List<string> states = new List<string>();
+        int[] dx = { 0, 0, -1, 1 };
+        int[] dy = { 1, -1, 0, 0 };
+
+        int zeroIndex = state.IndexOf('0');
+        int x = zeroIndex / 3;
+        int y = zeroIndex % 3;
+        for (int d = 0; d < 4; d++) {
+            var nextX = x + dx[d];
+            var nextY = y + dy[d];
+            if (nextX < 0 || nextX >=2 || nextY < 0 || nextY >=3)
+                continue;
+            
+            var chars = state.ToCharArray();
+            // swap
+            chars[x * 3 + y] = chars[nextX * 3 + nextY];
+            chars[nextX * 3 + nextY] = '0';
+            states.Add(new string(chars));
+        }
+
+        return states;
+    }
+
+    private string BuildStart(int[][] board) {
+        StringBuilder sb = new StringBuilder();
+        var startIndex = 0;
+        int n = board.Length;
+        int m = board[0].Length;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                sb.Append(board[i][j].ToString());
+            }
+        }
+
+        return sb.ToString();
+    }
+}
