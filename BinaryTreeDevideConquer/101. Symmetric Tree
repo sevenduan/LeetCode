@@ -1,0 +1,160 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left;
+ *     public TreeNode right;
+ *     public TreeNode(int val=0, TreeNode left=null, TreeNode right=null) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+public class Solution {
+    public bool IsSymmetric(TreeNode root) {
+        if (root == null)
+            return true;
+        
+        return IsSymmetric(root.left, root.right);
+    }
+
+    private bool IsSymmetric(TreeNode left, TreeNode right) {
+        if (left == null && right == null)
+            return true;
+        
+        if (left == null || right == null)
+            return false;
+        
+        if (left.val != right.val)
+            return false;
+        
+        var isLeftSymmetric = IsSymmetric(left.left, right.right);
+        var isRightSymmetric = IsSymmetric(left.right, right.left);
+        return isLeftSymmetric && isRightSymmetric;
+    }
+}
+
+-----------------------------Traversal--------------------------
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left;
+ *     public TreeNode right;
+ *     public TreeNode(int val=0, TreeNode left=null, TreeNode right=null) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+public class Solution {
+    public bool IsSymmetric(TreeNode root) {
+        if (root == null)
+            return true;
+        
+        var preorder = PreorderTraversal(root, false);
+        var reversePreorder = PreorderTraversal(root, true);
+
+        return CompareLists(preorder, reversePreorder);        
+    }
+
+    private bool CompareLists(IList<int> a, IList<int> b) {        
+        if (a.Count != b.Count)
+            return false;
+
+        for (int i = 0; i < a.Count; i++) {
+            if (a[i] != b[i]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private IList<int> PreorderTraversal(TreeNode root, bool reverse) {
+        List<int> preorder = new List<int>();
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        
+        stack.Push(root);
+        while (stack.Count > 0) {
+            TreeNode node = stack.Pop();
+            if (node == null) {
+                preorder.Add(-1);
+                continue;
+            } else {
+                preorder.Add(node.val);
+            }
+
+            var right = GetRight(node, reverse);
+            stack.Push(right);
+
+            var left = GetLeft(node, reverse);
+            stack.Push(left);
+        }
+
+        return preorder;
+    }
+    
+    private TreeNode GetLeft(TreeNode node, bool reverse) {
+        if (reverse) {
+            return node.right;
+        }
+        return node.left;
+    }
+    
+    private TreeNode GetRight(TreeNode node, bool reverse) {
+        if (reverse) {
+            return node.left;
+        }
+        return node.right;
+    }
+}
+-----------------------BFS------------------------------
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left;
+ *     public TreeNode right;
+ *     public TreeNode(int val=0, TreeNode left=null, TreeNode right=null) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+public class Solution {
+    public bool IsSymmetric(TreeNode root) {
+        if (root == null)
+            return true;
+        
+        var leftQ = new Queue<TreeNode>();
+        var rightQ = new Queue<TreeNode>();
+
+        if(root.left!=null) leftQ.Enqueue(root.left);
+        if(root.right!=null) rightQ.Enqueue(root.right);
+
+        while (leftQ.Count > 0 && rightQ.Count > 0) {
+            var leftCur = leftQ.Dequeue();
+            var rightCur = rightQ.Dequeue();
+
+            if (leftCur == null && rightCur == null)
+                continue;
+            
+            if (leftCur == null || rightCur == null)
+                return false;
+            
+            if (leftCur.val != rightCur.val)
+                return false;
+            
+            leftQ.Enqueue(leftCur.left);
+            leftQ.Enqueue(leftCur.right);
+            rightQ.Enqueue(rightCur.right);
+            rightQ.Enqueue(rightCur.left);
+        }
+        
+        return leftQ.Count == rightQ.Count;
+    }
+}
