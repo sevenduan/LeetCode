@@ -1,0 +1,103 @@
+public class Solution {
+    public int MinCapability(int[] nums, int k) {
+        if (nums == null || nums.Length == 0)
+            return 0;
+        
+        if (nums.Length == 1)
+            return nums[0];
+
+        int min = nums[0];
+        int max = nums[0];
+        foreach (var num in nums) {
+            min = Math.Min(min, num);
+            max = Math.Max(max, num);
+        }
+
+        int start = min;
+        int end = max;
+        while (start < end) {
+            int mid = start + (end - start) / 2;
+            int cnt = 0;
+            bool visited = false;
+
+            foreach (var num in nums ) {
+                if (num <= mid && !visited) {
+                    cnt++;
+                    visited = true;
+                } else {
+                    visited = false;
+                }
+            }
+
+            if (cnt >= k)
+                end = mid;
+            else 
+                start = mid + 1;            
+        }
+
+        return start;
+    }
+}
+
+-----------------------
+public class Solution {
+    public int MinCapability(int[] nums, int k) {
+        if (nums == null || nums.Length == 0)
+            return 0;
+        
+        if (nums.Length == 1)
+            return nums[0];
+
+        int min = nums[0];
+        int max = nums[0];
+        foreach (var num in nums) {
+            min = Math.Min(min, num);
+            max = Math.Max(max, num);
+        }
+
+        int start = min;
+        int end = max;
+        while (start + 1 < end) {
+            int mid = start + (end - start) / 2;
+            int cnt = 0;
+            bool visited = false;
+
+            foreach (var num in nums ) {
+                if (num <= mid && !visited) {
+                    cnt++;
+                    visited = true;
+                } else {
+                    visited = false;
+                }
+            }
+
+            if (cnt >= k)
+                end = mid;
+            else 
+                start = mid;            
+        }
+
+        if (IsValid(nums, k, start))
+            return start;
+
+        return end;
+    }
+
+        private bool IsValid(int[] nums, int k, int money) {            
+            int cnt = 0;
+            bool visited = false;
+            foreach (var num in nums ) {
+                if (num <= money && !visited) {
+                    cnt++;
+                    visited = true;
+                } else {
+                    visited = false;
+                }
+            }
+
+            if (cnt >= k)
+                return true;
+            
+            return false;
+        }
+}
