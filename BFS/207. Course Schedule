@@ -1,0 +1,50 @@
+public class Solution {
+    public bool CanFinish(int numCourses, int[][] prerequisites) {
+        var (graph, inDegree) = BuildGraph(numCourses, prerequisites);
+
+        return Bfs(numCourses, graph, inDegree);
+    }
+
+    private bool Bfs(int n, List<int>[] graph, int[] inDegree) {
+        Queue<int> queue = new Queue<int>();
+        for (int i = 0; i < inDegree.Length; i++)
+        {
+            if (inDegree[i] == 0)
+                queue.Enqueue(i);
+        }
+
+        int numChoose = 0;
+        while (queue.Count > 0) {
+            var course = queue.Dequeue();
+            numChoose++;
+            
+            foreach (var nextCourse in graph[course]) {
+                inDegree[nextCourse]--;
+                if (inDegree[nextCourse] == 0)
+                    queue.Enqueue(nextCourse);
+            }
+        }
+
+        if (numChoose == n)
+            return true;
+        
+        return false;
+    }
+
+    private (List<int>[] graph, int[] inDegree) BuildGraph(int n, int[][] prerequisites) {
+        var graph = new List<int>[n];
+        for (int i = 0; i < n; i++)
+        {
+            graph[i] = new List<int>();
+        }
+
+        var inDegree = new int[n];
+        foreach (var item in prerequisites)
+        {
+            graph[item[1]].Add(item[0]);
+            inDegree[item[0]]++;
+        }
+
+        return (graph, inDegree);
+    }
+}

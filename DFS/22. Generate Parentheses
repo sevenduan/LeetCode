@@ -1,0 +1,28 @@
+public class Solution {
+    public IList<string> GenerateParenthesis(int n) {
+        List<string> answer = new List<string>();
+        List<string> sequence = new List<string>();
+
+        Dfs(n, 0, sequence, answer);
+        return answer;
+    }
+
+    private void Dfs(int n, int leftParanthese, List<string> sequence, List<string> answer) {
+        if (sequence.Count == n * 2) {
+            answer.Add(string.Join("", sequence));
+            return;
+        }
+
+        if (leftParanthese < n) {
+            sequence.Add("(");
+            Dfs(n, leftParanthese + 1, sequence, answer);
+            sequence.RemoveAt(sequence.Count - 1);
+        }
+
+        if (leftParanthese > sequence.Count - leftParanthese) {
+            sequence.Add(")");
+            Dfs(n, leftParanthese, sequence, answer);
+            sequence.RemoveAt(sequence.Count - 1);
+        }
+    }
+}

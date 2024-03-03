@@ -1,0 +1,72 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+        /**
+         * @param n: an integer, denote the number of courses
+         * @param p: a list of prerequisite pairs
+         * @return: return an integer,denote the number of topologicalsort
+         */
+        public int TopologicalSortNumber(int n, int[][] p) {
+            // Write your code here
+            var (graph, inDegree) = BuildGraph(n, p);
+
+            var visited = new int[n];
+            var memo = new Dictionary<string, int>();
+            return Dfs(n, inDegree, visited, graph, 0, memo);
+        }
+
+        private int Dfs(int n, int[] inDegree, int[] visited, List<int>[] graph, int count, Dictionary<string, int> memo) {
+            if (count == n) {
+                return 1;
+            }
+
+            var state = string.Join(",", visited);
+            if (memo.ContainsKey(state)) {
+                return memo[state];
+            }
+
+            int num = 0;
+            for (int course = 0; course < n; course++)
+            {
+                if (visited[course] == 1 || inDegree[course] > 0)
+                    continue;
+                
+                visited[course] = 1;
+
+                foreach (var nextCourse in graph[course]) {
+                    inDegree[nextCourse]--;
+                }
+                num += Dfs(n, inDegree, visited, graph, count + 1, memo);
+
+                foreach (var nextCourse in graph[course]) {
+                    inDegree[nextCourse]++;
+                }
+                visited[course] = 0;
+            }
+
+            memo[state] = num;
+            return num;
+        }
+
+        private (List<int>[] graph, int[] inDegree) BuildGraph(int n, int[][] prerequisites) {
+            var graph = new List<int>[n];
+            for (int i = 0; i < n; i++)
+            {
+                graph[i] = new List<int>();
+            }
+
+            var inDegree = new int[n];
+            foreach (var item in prerequisites)
+            {
+                graph[item[1]].Add(item[0]);
+                inDegree[item[0]]++;
+            }
+
+            return (graph, inDegree);
+        }
+    }
+}
