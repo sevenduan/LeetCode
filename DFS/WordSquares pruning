@@ -1,0 +1,84 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+
+namespace lintcode
+{
+    class Solution {
+        /**
+         * @param words: a set of words without duplicates
+         * @return: all word squares
+         *          we will sort your return value in output
+         */
+        public List<string[]> WordSquares(string[] words) {
+            // write your code here
+            List<string> square = new List<string>();
+            List<string[]> squares = new List<string[]>();
+            if (words == null || words.Length == 0)
+                return squares;
+            
+            var prefixToWords = GetPrefixToWords(words);
+
+            foreach (var word in words) {
+                square.Add(word);
+                Search(prefixToWords, square, squares);
+                square.RemoveAt(square.Count - 1);
+            }
+
+            return squares;
+        }
+
+        private void Search(Dictionary<string, List<string>> prefixToWords, List<string> square, List<string[]> squares) {
+            var index = square.Count;
+            int n = square[0].Length;
+
+            if (index == n) {
+                squares.Add(square.ToArray());
+                return;
+            }
+
+            // pruning
+            for (int i = index; i < n; i++) {
+                var prefixP = new StringBuilder();
+                for (int j = 0; j < index; j++) {
+                    prefixP.Append(square[j][i]);
+                }
+
+                if (!prefixToWords.ContainsKey(prefixP.ToString()))
+                    return;
+            }
+
+            StringBuilder prefix = new StringBuilder();
+            for (int i = 0; i < index; i++) {
+                prefix.Append(square[i][index]);
+            }
+
+            if (!prefixToWords.ContainsKey(prefix.ToString()))
+                return;
+            
+            var nextWords = prefixToWords[prefix.ToString()];
+
+            foreach (var next in nextWords) {
+                square.Add(next);
+                Search(prefixToWords, square, squares);
+                square.RemoveAt(square.Count - 1);
+            }
+        }
+
+        private Dictionary<string, List<string>> GetPrefixToWords(string[] words) {
+            var prefixToWords = new Dictionary<string, List<string>>();
+            foreach (var word in words) {
+                for (int i = 0; i < word.Length - 1; i++) {
+                    var prefix = word.Substring(0, i + 1);
+                    if (!prefixToWords.ContainsKey(prefix)) {
+                        prefixToWords[prefix] = new List<string>();
+                    }
+                    prefixToWords[prefix].Add(word);
+                }
+            }
+
+            return prefixToWords;
+        }
+    }
+}

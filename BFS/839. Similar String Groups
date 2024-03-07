@@ -1,0 +1,100 @@
+public class Solution {
+    public int NumSimilarGroups(string[] strs) {
+        if (strs == null || strs.Length == 0)
+            return 0;
+        
+        HashSet<string> dicts= new HashSet<string>();
+        for (int i = 0; i < strs.Length; i++) {
+            dicts.Add(strs[i]);
+        }
+
+        Queue<string> queue = new Queue<string>();
+        HashSet<string> visited = new HashSet<string>();
+
+        int n = strs.Length;
+        int groups = 0;
+        foreach (var word in strs) {
+            if (visited.Contains(word))
+                continue;
+            
+            BFS(word, dicts, visited);
+            groups++;
+        }
+
+        return groups;
+    }
+
+    private void BFS(string word, HashSet<string> dicts, HashSet<string> visited) {
+        Queue<string> queue = new Queue<string>();
+        queue.Enqueue(word);
+        visited.Add(word);
+
+        while (queue.Count > 0) {
+            var current = queue.Dequeue();
+
+            foreach (var next in GetNextWords(current, dicts)) {
+                if (visited.Contains(next))
+                    continue;
+                
+                queue.Enqueue(next);
+                visited.Add(next);
+            }
+        }
+    }
+    
+    private List<string> GetNextWords(string word, HashSet<string> dicts) {
+        if (word.Length * word.Length < dicts.Count) {
+            return GetNeighborWords1(word, dicts); //O(L*L*L)
+        } 
+        return GetNeighborWords2(word, dicts); //O(N*L)
+    }
+
+    public List<string> GetNeighborWords1(string word, HashSet<string> dicts) {
+        int n = word.Length;
+        char[] chars = word.ToCharArray();
+        List<string> neighbors = new List<string>();
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                char temp = chars[i];
+                chars[i] = chars[j];
+                chars[j] = temp;
+                string anagram = new string(chars);
+                if (dicts.Contains(anagram)) {
+                    neighbors.Add(anagram);
+                }
+                temp = chars[i];
+                chars[i] = chars[j];
+                chars[j] = temp;
+            }
+        }
+        
+        return neighbors;
+    }
+    
+    private List<string> GetNeighborWords2(string word, HashSet<string> dicts) {
+        List<string> words = new List<string>();
+        foreach (var next in dicts) {
+            if (IsSimilar(word, next)) {
+                words.Add(next);
+            }
+        }
+
+        return words;
+    }
+
+    private bool IsSimilar(string word1, string word2) {
+        if (word1.Length != word2.Length)
+            return false;
+
+        int diff = 0;
+        for (int i = 0; i < word1.Length; i++) {
+            if (word1[i] != word2[i]) {
+                diff++;
+                if (diff > 2)
+                    return false;
+            }
+        }
+        
+        return true;
+    }
+}

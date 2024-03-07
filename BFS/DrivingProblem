@@ -1,0 +1,61 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+        private const int BoundMinDistance = 5;
+        private const int ObstacleMinDistance = 6;
+        /**
+         * @param l: the length
+         * @param w: the width
+         * @param p:  the obstacle coordinates
+         * @return: yes or no
+         */
+        public string DrivingProblem(int l, int w, double[][] p) {
+            // Write your code here.
+            Queue<Tuple<double?, double>> queue = new Queue<Tuple<double?, double>>();
+            HashSet<Tuple<double?, double>> visited = new HashSet<Tuple<double?, double>>();
+
+            queue.Enqueue(new Tuple<double?, double>(null, w));
+            visited.Add(new Tuple<double?, double>(null, w));
+
+            while (queue.Count > 0) {
+                var node = queue.Dequeue();
+
+                double? x = node.Item1;
+                double y = node.Item2;
+
+                if (y <= BoundMinDistance) {
+                    return "no";
+                }
+
+                foreach (var item in p) {
+                    double obstacleX = item[0];
+                    double obstacleY = item[1];
+
+                    if (visited.Contains(new Tuple<double?, double>(obstacleX, obstacleY)))
+                        continue;
+                    
+                    if (IsConnected(x, y, obstacleX, obstacleY)) {
+                        queue.Enqueue(new Tuple<double?, double>(obstacleX, obstacleY));
+                        visited.Add(new Tuple<double?, double>(obstacleX, obstacleY));
+                    }
+                }
+            }
+
+            return "yes";
+        }
+
+        private bool IsConnected(double? x1, double y1, double? x2, double y2) {
+            if (x1 == null) {
+                return Math.Abs(y1 - y2) <= BoundMinDistance;
+            }
+
+            double distance = (x1.Value - x2.Value) * (x1.Value - x2.Value) + (y1 - y2) * (y1 - y2);
+
+            return distance <= Math.Pow(ObstacleMinDistance, 2);
+        }
+    }
+}
