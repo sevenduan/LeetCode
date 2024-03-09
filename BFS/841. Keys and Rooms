@@ -1,0 +1,30 @@
+public class Solution {
+    public bool CanVisitAllRooms(IList<IList<int>> rooms) {
+        if (rooms == null || rooms.Count == 0)
+            return false;
+
+        Queue<int> queue = new Queue<int>();
+        HashSet<int> visited = new HashSet<int>();
+        
+        queue.Enqueue(0);
+        visited.Add(0);
+
+        while (queue.Count > 0) {
+            var current = queue.Dequeue();
+            var keys = rooms[current];
+
+            foreach (var key in keys) {
+                if (visited.Contains(key))  
+                    continue;
+                
+                queue.Enqueue(key);
+                visited.Add(key);
+            }
+        }
+
+        if (visited.Count == rooms.Count)
+            return true;
+        
+        return false;
+    }
+}
