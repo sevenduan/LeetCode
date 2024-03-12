@@ -1,0 +1,46 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     public int val;
+ *     public ListNode next;
+ *     public ListNode(int val=0, ListNode next=null) {
+ *         this.val = val;
+ *         this.next = next;
+ *     }
+ * }
+ */
+public class Solution {
+    public ListNode RemoveZeroSumSublists(ListNode head) {
+        // convert to array
+        if (head == null)
+            return head;
+
+        var prefixToNode = new Dictionary<int, ListNode>();
+        int sum = 0;
+
+        var dummy = new ListNode(0, head);
+        var current = dummy;
+
+        while (current != null) {
+            sum += current.val;
+            prefixToNode[sum] = current;
+            current = current.next;
+        }
+
+        sum = 0;
+        current = dummy;;
+
+        while (current != null) {
+            sum += current.val;
+            Console.WriteLine(sum);
+
+            if (prefixToNode.ContainsKey(sum))
+                current.next = prefixToNode[sum].next;
+            
+            current = current.next;
+        }
+        
+        return dummy.next;
+    }
+
+}
