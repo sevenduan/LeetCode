@@ -1,0 +1,24 @@
+// prefix + Hash
+// prefix[j] - prefix[i-1] = goal
+// prefix[i - 1] = prefix[j] - goal
+
+public class Solution {
+    public int NumSubarraysWithSum(int[] nums, int goal) {
+        int res = 0;
+        int curSum = 0;
+        Dictionary<int, int> map = new Dictionary<int, int>();
+        map[0] = 1;
+        foreach (var num in nums) {
+            curSum += num; // prefix sum
+            if (map.ContainsKey(curSum - goal))
+                res += map[curSum - goal];
+
+            if (!map.ContainsKey(curSum))
+                map[curSum] = 1;
+            else
+                map[curSum]++;
+        }
+
+        return res;
+    }
+}

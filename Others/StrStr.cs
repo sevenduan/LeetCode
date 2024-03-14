@@ -9,7 +9,7 @@ public class SolutionStrStr {
 
         for (i = 0; i < haystack.Length - needle.Length + 1; i++)
         {
-            for (j =0; j < needle.Length; j++)
+            for (j = 0; j < needle.Length; j++)
             {
                 if (haystack[i + j] != needle[j])
                     break;
