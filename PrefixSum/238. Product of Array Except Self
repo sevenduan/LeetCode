@@ -1,0 +1,28 @@
+public class Solution {
+    public int[] ProductExceptSelf(int[] nums) {
+        if (nums == null || nums.Length == 0)
+            return nums;
+        
+        int n = nums.Length;
+        var prefixProducts = new int[n];
+        prefixProducts[0] = 1;
+
+        for (int i = 1; i < n; i++) {
+            prefixProducts[i] = prefixProducts[i - 1] * nums[i - 1];
+        }
+
+        var suffixProducts = new int[n];
+        suffixProducts[n - 1] = 1;
+        for (int i = n - 2; i >= 0; i--) {
+            suffixProducts[i] = suffixProducts[i + 1] * nums[i + 1];
+        }
+
+        var answer = new int[n];
+        // Calculate answer
+        for (int i = 0; i < n; i++) {
+            answer[i] = prefixProducts[i] * suffixProducts[i];
+        }
+
+        return answer;
+    }
+}
