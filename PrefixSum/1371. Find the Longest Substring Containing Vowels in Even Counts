@@ -1,0 +1,44 @@
+public class Solution {
+    public int FindTheLongestSubstring(string s) {
+        if (s == null || s.Length == 0)
+            return 0;
+        
+        var stateToIndex = new Dictionary<int, int>();
+        int max = 0;
+        int state = 0;
+
+        stateToIndex[0] = -1;
+
+        for (int i = 0; i < s.Length; i++) {
+            switch (s[i]) {
+                case 'a':
+                    state = state ^ 1;
+                    break;
+                case 'e':
+                    state = state ^ 2;
+                    break;
+                case 'i':
+                    state = state ^ 4;
+                    break;
+                case 'o':
+                    state = state ^ 8;
+                    break;
+                case 'u':
+                    state = state ^ 16;
+                    break;
+            }
+
+            if (state == 0) {
+                max = i + 1;
+                continue;
+            }
+
+            if (stateToIndex.ContainsKey(state)) {
+                max = Math.Max(max, i - stateToIndex[state]);
+            } else {
+                stateToIndex[state] = i;
+            }
+        }
+        return max;
+    }
+}
