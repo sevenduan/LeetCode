@@ -1,0 +1,54 @@
+public class Solution {
+    public int FindMinArrowShots(int[][] points) {
+        if (points == null || points.Length == 0)
+            return 0;
+        
+        if (points[0] == null || points[0].Length == 0)
+            return 0;
+        
+        Array.Sort(points, (a, b) => {
+            if (a[0] == b[0])
+                return a[1].CompareTo(b[1]);
+            
+            return a[0].CompareTo(b[0]);
+        });
+        int ans = 1;
+        int n = points.Length;
+        int end = points[0][1];
+        for (int i = 1; i < n; i++) {
+            if (end >= points[i][0]){
+                end = Math.Min(end, points[i][1]);
+                continue;
+            }
+            
+            ans++;
+            end = points[i][1];
+        }
+
+        return ans;        
+    }
+}
+
+
+public class Solution {
+    public int FindMinArrowShots(int[][] points) {
+        if (points == null || points.Length == 0)
+            return 0;
+        
+        if (points[0] == null || points[0].Length == 0)
+            return 0;
+        
+        Array.Sort(points, (a, b) => a[1].CompareTo(b[1]));
+        int ans = 1;
+        int n = points.Length;
+        int end = points[0][1];
+        for (int i = 1; i < n; i++) {
+            if (end < points[i][0]){
+                ans++;
+                end = points[i][1];
+            }            
+        }
+
+        return ans;        
+    }
+}

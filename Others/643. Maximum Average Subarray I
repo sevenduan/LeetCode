@@ -1,0 +1,26 @@
+public class Solution {
+    public double FindMaxAverage(int[] nums, int k) {
+        double max = 0.0;
+        if (nums == null || nums.Length == 0)
+            return max;
+
+        double prefixSum = 0.0;
+        double leftSum = 0.0;
+        int n = nums.Length;
+        int t = Math.Min(n, k);
+
+        for (int i = 0; i < t; i++) {
+            prefixSum += nums[i];
+        }
+        
+        max = prefixSum / t;
+        for (int i = t; i < n; i++) {
+            prefixSum += nums[i];
+            leftSum += nums[i - t];
+            double avg = (prefixSum - leftSum) / t;
+            max = Math.Max(max, avg);
+        }
+
+        return max;
+    }
+}

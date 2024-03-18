@@ -1,0 +1,82 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+        /**
+         * @param nums: an array with positive and negative numbers
+         * @param k: an integer
+         * @return: the maximum average
+         */
+        public double MaxAverage(int[] nums, int k) {
+            // write your code here
+            if (nums == null || nums.Length == 0)
+                return 0;
+            
+            var n = nums.Length;
+            // var prefixSum = new int[n + 1];
+            // prefixSum[0] = 0;
+            // for (int i = 0; i < n; i++) {
+            //     prefixSum[i + 1] = prefixSum[i] + nums[i];
+            // }
+            double start = (double) nums[0];
+            double end = (double) nums[0];
+            for (int i = 0; i < n; i++) {
+                start = Math.Min(start, nums[i]);
+                end = Math.Max(end, nums[i]);
+            }
+
+            // binary search answer
+            while (end - start >= 1e-5) {
+                double mid = start + (end - start) / 2;
+                if (CanFind(nums, k, mid)) {
+                    start = mid;
+                } else {
+                    end = mid;
+                }
+            }
+            
+            return end;
+
+            // double max = 0;
+            // for (int i = 0; i < n - k + 1; i++){
+            //     for (int j = i + k; j < n + 1; j++) {
+            //         int sum = prefixSum[j] - prefixSum[i];
+            //         int count = j - i;
+            //         double average = sum * 1.0 / count;
+            //         max = Math.Max(max, average);
+            //     }
+            // }
+
+            // return max;
+        }
+
+
+        private bool CanFind(int[] nums, int k, double avg) {
+            int n = nums.Length;
+            double prefixSum = 0.0;
+            double leftSum = 0.0;
+            double minLeftSum = 0.0;
+
+            for (int i = 0; i < k; ++i) {
+                prefixSum += nums[i] - avg;
+            }
+
+            if (prefixSum - minLeftSum >= 0) {
+                return true;
+            }
+
+            for (int i = k; i < n; ++i) {
+                prefixSum += nums[i] - avg;
+                leftSum += nums[i - k] - avg;
+                minLeftSum = Math.Min(minLeftSum, leftSum);
+                if (prefixSum - minLeftSum >= 0) {
+                    return true;
+                }                
+            }
+            return false;
+        }
+    }
+}

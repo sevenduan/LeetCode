@@ -1,0 +1,62 @@
+public class Solution {
+    private const int Prime = 31;
+    private const int Mod = 1000000;
+    public int StrStr(string haystack, string needle) {
+        if (haystack == null || needle == null)
+            return -1;
+        
+        if (haystack.Length < needle.Length)
+            return -1;
+        
+        if (haystack == needle)
+            return 0;
+        
+        int n = haystack.Length;
+        int m = needle.Length; 
+
+        int hashHay = Hash(haystack, 0, m);
+        int hashTarget = Hash(needle, 0, m);
+        
+        int pow = 1;
+        for (int i = 1; i < m; i++) {
+            pow = (pow * Prime) % Mod;
+        }
+
+        for (int i = 0; i <= n - m; i++) {
+            if (hashHay == hashTarget && AreEqual(haystack, needle, i, m))
+                return i;
+
+            if (i < n - m)
+                hashHay = ReHash(hashHay, haystack, i, m, pow);
+        }
+
+        return -1;
+   }
+
+   private int Hash(string text, int index, int m) {
+        int hash = 0;
+        for (int i = 0; i < m; i++) {
+            hash = (hash * Prime + text[i]) % Mod;
+        }
+        return hash;
+   }
+
+   private int ReHash(int oldHash, string text, int index, int length, int pow) {
+        int newHash = (oldHash - text[index] * pow) % Mod;
+        newHash = (newHash + Mod) % Mod;
+            
+        newHash = (newHash * Prime % Mod + text[index + length]) ;
+
+        return newHash % Mod;
+    }
+
+    private bool AreEqual(string source, string target, int index, int length) {
+        for (int i = 0; i < length; i++) {
+            if (source[index + i] != target[i])
+                return false;
+        }
+
+        return true;
+    }
+
+}

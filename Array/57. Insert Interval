@@ -1,0 +1,33 @@
+public class Solution {
+    public int[][] Insert(int[][] intervals, int[] newInterval) {
+        if (newInterval == null || newInterval.Length == 0)
+            return intervals;
+        
+        if (intervals == null || intervals.Length == 0)
+            return new int[][] {newInterval};
+
+        List<int[]> mergedIntervals = new List<int[]>();
+
+        int i = 0;
+        int n = intervals.Length;
+
+        while (i < n && intervals[i][1] < newInterval[0]){
+            mergedIntervals.Add(intervals[i]);
+            i++;
+        }
+        
+        while (i < n && intervals[i][0] <= newInterval[1]) {
+            newInterval[0] = Math.Min(intervals[i][0], newInterval[0]);
+            newInterval[1] = Math.Max(intervals[i][1], newInterval[1]);
+            i++;
+        }
+        mergedIntervals.Add(newInterval);
+
+        while (i < n) {
+            mergedIntervals.Add(intervals[i]);
+            i++;
+        }
+
+        return mergedIntervals.ToArray();
+    }
+}
