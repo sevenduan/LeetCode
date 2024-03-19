@@ -1,0 +1,102 @@
+public class Solution
+{
+    private int[] dx = new int[] { 1, -1, 0, 0 };
+    private int[] dy = new int[] { 0, 0, 1, -1 };
+
+    public int CutOffTree(IList<IList<int>> forest)
+    {
+        if (forest == null || forest.Count == 0)
+            return 0;
+
+        if (forest[0] == null || forest[0].Count == 0)
+            return 0;
+
+        var trees = GetTrees(forest);
+
+        trees.Sort((a, b) => a[2].CompareTo(b[2]));
+
+        int ans = 0;
+        int start = 0;
+        int m = forest[0].Count;
+
+        for (int i = 0; i < trees.Count; i++)
+        {
+            var steps = BFS(start, trees[i], forest);
+
+            if (steps == -1)
+                return -1;
+
+            ans += steps;
+            start = trees[i][0] * m + trees[i][1];
+        }
+
+        return ans;
+    }
+
+    private List<int[]> GetTrees(IList<IList<int>> forest)
+    {
+        List<int[]> trees = new List<int[]>();
+        for (int i = 0; i < forest.Count; i++)
+        {
+            for (int j = 0; j < forest[0].Count; j++)
+            {
+                if (forest[i][j] > 1)
+                    trees.Add(new int[] { i, j, forest[i][j] });
+            }
+        }
+
+        return trees;
+    }
+
+    private int BFS(int start, int[] tree, IList<IList<int>> forest)
+    {
+        HashSet<int> visited = new HashSet<int>();
+        Queue<int[]> queue = new Queue<int[]>();
+
+        int n = forest.Count;
+        int m = forest[0].Count;
+
+        queue.Enqueue(new int[] { start, 0 });
+        visited.Add(start);
+
+        while (queue.Count > 0)
+        {
+            var current = queue.Dequeue();
+            int x = current[0] / m;
+            int y = current[0] % m;
+            int step = current[1];
+
+            if (x == tree[0] && y == tree[1])
+                return step;
+            
+            for (int i = 0; i < 4; i++)
+            {
+                int newX = x + dx[i];
+                int newY = y + dy[i];
+                int node = newX * m + newY;
+
+                if (visited.Contains(node))
+                    continue;
+
+                if (!IsValid(newX, newY, forest))
+                    continue;
+
+                queue.Enqueue(new int[] { node, step + 1 });
+                visited.Add(node);
+            }
+        }
+
+        return -1;
+    }
+
+    private bool IsValid(int x, int y, IList<IList<int>> forest)
+    {
+        int n = forest.Count;
+        int m = forest[0].Count;
+
+        if (x >= n || x < 0 || y >= m || y < 0)
+            return false;
+
+        return forest[x][y] > 0;
+    }
+}

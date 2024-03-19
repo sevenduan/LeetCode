@@ -1,0 +1,25 @@
+public class Solution {
+    public int LeastInterval(char[] tasks, int n) {
+        if (tasks == null || tasks.Length == 0)
+            return 0;
+        
+        int[] frequencies = new int[26];
+
+        foreach (var task in tasks) {
+            frequencies[task - 'A']++;
+        }
+
+        Array.Sort(frequencies);
+
+        int maxFrequency = frequencies[25];
+        int idleTime = (maxFrequency - 1) * (n + 1);
+        int sameWithMax = 0;
+        
+        for (int i = 0; i < 26; i++) {
+            if (frequencies[i] == maxFrequency)
+                sameWithMax++;
+        }
+
+        return Math.Max(tasks.Length, (frequencies[25] - 1) * (n + 1) + sameWithMax);
+    }
+}
