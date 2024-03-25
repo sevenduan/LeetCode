@@ -1,0 +1,62 @@
+/**
+ * Definition of TreeNode:
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left, right;
+ *     public TreeNode(int val) {
+ *         this.val = val;
+ *         this.left = this.right = null;
+ *     }
+ * }
+ */
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+        /**
+         * @param root: the root of binary tree
+         * @param target: An integer
+         * @return: all valid paths
+         *          we will sort your return value in output
+         */
+        public List<int[]> BinaryTreePathSum(TreeNode root, int target) {
+            // write your code here
+            // DFS check
+            List<int[]> ans = new List<int[]>();
+            if (root == null)
+                return ans;
+            List<int> path = new List<int>();
+            path.Add(root.val);
+            DFS(root, target, path, root.val, ans);
+            return ans;
+        }
+
+        private void DFS(TreeNode root, int target, List<int> path, int sum, List<int[]> ans) {
+            if (root.left == null && root.right == null) {
+                if (sum == target)
+                    ans.Add(path.ToArray());
+                
+                return;
+            }
+
+            if (root.left != null) {
+                int left = root.left.val;
+                path.Add(left);
+                DFS(root.left, target, path, sum + left, ans);
+                path.RemoveAt(path.Count - 1);
+            }
+
+            if (root.right != null) {
+                int right = root.right.val;
+                path.Add(right);
+                DFS(root.right, target, path, sum + right, ans);
+                path.RemoveAt(path.Count - 1);
+            }
+        }
+
+    }
+}

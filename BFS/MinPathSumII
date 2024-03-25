@@ -1,0 +1,81 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+        public int[] dx = new int[] { 1, 0, -1, 0};
+        public int[] dy = new int[] { 0, 1, 0, -1};
+        /**
+         * @param matrix: a matrix
+         * @return: the minimum height
+         */
+        public int MinPathSumII(int[][] matrix) {
+            // Write your code here
+            // BFS 
+            if (matrix == null || matrix.Length == 0)
+                return 0;
+            
+            if (matrix[0] == null || matrix[0].Length == 0)
+                return 0;
+            
+            int ans = BFS(matrix);
+
+            return ans;
+        }
+
+        private int BFS(int[][] matrix) {
+            int answer = int.MaxValue;
+            int n = matrix.Length;
+            int m = matrix[0].Length;
+            int start = (n - 1) * m;
+            Queue<int> queue = new Queue<int>();
+            
+            
+            int[] visited = new int[n * m]; 
+            for (int i = 0; i < n * m; i++) {
+                visited[i] = int.MaxValue; // Initialize to maximum value
+            }
+            
+            queue.Enqueue(start);
+            visited[start] = matrix[n - 1][0];
+
+            while (queue.Count > 0) {
+                var current = queue.Dequeue();
+                var currX = current / m;
+                var currY = current % m;
+
+                if (currX == 0 && currY == m - 1)
+                     answer = Math.Min(answer, visited[current]);
+
+                for (int i = 0; i < 4; i++) {
+                    var nextX = currX + dx[i];
+                    var nextY = currY + dy[i];
+                    if (!IsValid(nextX, nextY, matrix))
+                        continue;
+
+                    var next = nextX * m + nextY;
+                    var nextCost = visited[current] + matrix[nextX][nextY];
+
+                    if (visited[next] <= nextCost)
+                        continue;
+
+                    queue.Enqueue(next);
+                    visited[next] = nextCost;
+                }
+            }
+
+            return answer;
+        }
+
+        private bool IsValid(int x, int y, int[][] matrix) {            
+            int n = matrix.Length;
+            int m = matrix[0].Length;
+            if (x < 0 || x >= n || y < 0 || y >= m)
+                return false;
+            
+            return true;
+        }
+    }
+}
