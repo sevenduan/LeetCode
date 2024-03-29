@@ -1,0 +1,43 @@
+public class Solution {
+    public long CountSubarrays(int[] nums, int k) {
+        if (nums == null || nums.Length == 0)
+            return 0;
+        
+        if (k <= 0)
+            return 0;
+
+        int max = FindMaxNum(nums);
+
+        long ans = 0;
+        int left = 0;
+        int right = 0;
+        int n = nums.Length;
+        int maxCount = 0;
+
+        while (right < n) {
+            if (nums[right] == max)
+                maxCount++;
+            
+            right++;
+
+            while (maxCount >= k) {
+                ans = ans + (n - right + 1);
+                if (nums[left] == max)
+                    maxCount--;
+                
+                left++;
+            }
+        }
+
+        return ans;
+    }
+
+    private int FindMaxNum(int[] nums) {
+        int max = 0;
+        foreach (var num in nums) {
+            max = Math.Max(num, max);
+        }
+
+        return max;
+    }
+}

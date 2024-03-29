@@ -1,0 +1,34 @@
+public class Solution {
+    public int MaxSubarrayLength(int[] nums, int k) {
+        if (nums == null || nums.Length == 0)
+            return 0;
+        
+        if (k <= 0)
+            return 0;
+        
+        var cnt = new Dictionary<int, int>();
+
+        int left = 0;
+        int right = 0;
+        int n = nums.Length;
+        int ans = 0;
+        while (right < n) {
+            int num = nums[right];
+            if (cnt.ContainsKey(num))
+                cnt[num] = cnt[num] + 1;
+            else
+                cnt[num] = 1;
+            
+            right++;
+
+            while (cnt[num] > k) {
+                cnt[nums[left]] = cnt[nums[left]] - 1;
+                left++;
+            }
+
+            ans = Math.Max(ans, right - left);
+        }
+
+        return ans;
+    }
+}

@@ -1,0 +1,65 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+        /**
+         * @param nums: 4 cards
+         * @return: whether they could get the value of 24
+         */
+        public bool Compute24(double[] nums) {
+            // write your code here
+            if (nums == null || nums.Length != 4)
+                return false;
+            
+            return DFS(nums, 24, 4);
+        }
+
+        private bool DFS(double[] nums, int target, int size) {
+            if (size == 1)
+                return Math.Abs(nums[0] - target) < 1e-6;
+
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    if (i == j) {
+                        continue;
+                    }
+                    
+                    double[] remaining = new double[size];
+                    int index = 0;
+                    for (int k = 0; k < size; k++)
+                    {
+                        if (k != i && k != j)
+                        {
+                            remaining[index++] = nums[k];
+                        }
+                    }
+
+                    if (i < j)
+                    {
+                        remaining[index] = nums[i] + nums[j];
+                        if (DFS(remaining, target, size - 1)) return true;
+                        remaining[index] = nums[i] * nums[j];
+                        if (DFS(remaining, target, size - 1)) return true;
+                    }
+
+                    remaining[index] = nums[i] - nums[j];
+                    if (DFS(remaining, target, size - 1)) return true;
+
+                    // Check if nums[j] is not equal to 0 before performing division
+                    if (Math.Abs(nums[j]) > 1e-6)
+                    {
+                        remaining[index] = nums[i] / nums[j];
+                        if (DFS(remaining, target, size - 1)) return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+    }
+}
