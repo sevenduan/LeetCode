@@ -1,0 +1,36 @@
+public class Solution {
+    public int SubarraysWithKDistinct(int[] nums, int k) {
+        if (nums == null || nums.Length == 0)
+            return 0;
+
+        return Helper(nums, k) - Helper(nums, k - 1);
+    }
+
+    public int Helper(int[] nums, int k) {
+        int n = nums.Length;
+        int res = 0, left = 0, right = 0;
+        var numCnt = new Dictionary<int, int>();
+
+        while (right < n) {
+            int num = nums[right];
+            if (numCnt.ContainsKey(num))
+                numCnt[num]++;
+            else
+                numCnt[num] = 1;
+
+            right++;
+
+            while (numCnt.Count > k) {
+                numCnt[nums[left]]--;
+                if (numCnt[nums[left]] == 0)
+                    numCnt.Remove(nums[left]);
+                    
+                left++;
+            }
+
+            res += right - left;
+        }
+ 
+        return res;
+    }
+}
