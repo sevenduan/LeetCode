@@ -1,0 +1,84 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace lintcode
+{
+    class Solution {
+        public class Pair {
+            public int Destination {get; set;}
+            public int Cost{get;set;}
+            public Pair(int destination, int cost) {
+                Destination = destination;
+                Cost = cost;
+            }
+        }
+        /**
+         * @param times: a 2D array
+         * @param n: an integer
+         * @param k: an integer
+         * @return: how long will it take for all nodes to receive the signal
+         */
+        public int NetworkDelayTime(int[][] times, int n, int k) {
+            // Write your code here
+            if (times == null || times.Length == 0)
+                return 0;
+            
+            if (times[0] == null || times[0].Length == 0)
+                return 0;
+
+            var graph = BuildGraph(times);
+            return BFS(graph, n, k);
+        }
+
+        private int BFS(Dictionary<int, List<Pair>> graph, int n, int k) {
+            Queue<int> queue = new Queue<int>();
+            Dictionary<int, int> distances = new Dictionary<int, int>();
+            queue.Enqueue(k);
+            distances[k] = 0;
+
+            while (queue.Count > 0) {
+                var current = queue.Dequeue();
+                if (!graph.ContainsKey(current))
+                    continue;
+
+                int currentDistance = distances[current];
+                var pairs = graph[current];
+
+                foreach (var pair in pairs) {
+                    int next = pair.Destination;
+                    int nextDistance = currentDistance + pair.Cost;
+                    if (distances.ContainsKey(next) && distances[next] <= nextDistance)
+                        continue;
+
+                    queue.Enqueue(next);
+                    distances[next] = nextDistance;
+                }
+            }
+
+            if (distances.Count != n)
+                return -1;
+
+            int result = 0;
+            
+            foreach (int dis in distances.Values)
+                result = Math.Max(result, dis);
+                
+            return result;
+
+        }
+
+        private Dictionary<int, List<Pair>> BuildGraph(int[][] times) {
+            var graph = new Dictionary<int, List<Pair>>();
+            foreach (var time in times) {
+                if (!graph.ContainsKey(time[0]))
+                    graph[time[0]] = new List<Pair>();
+                
+                graph[time[0]].Add(new Pair(time[1], time[2]));
+            }
+
+            return graph;
+        }
+
+    }
+}
