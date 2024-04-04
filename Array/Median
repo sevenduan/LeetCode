@@ -6,24 +6,22 @@ namespace lintcode
 {
     class Solution {
         /**
-         * @param k: An integer
-         * @param nums: An array
-         * @return: the Kth largest element
+         * @param nums: A list of integers
+         * @return: An integer denotes the middle number of the array
          */
-        public int KthLargestElement(int k, int[] nums) {
+        public int Median(int[] nums) {
             // write your code here
             if (nums == null || nums.Length == 0)
                 return 0;
             
-            if (k < 0 || k > nums.Length)
-                return 0;
-            
-            return QuickSelct(nums, 0, nums.Length - 1, nums.Length - k);
+            int n = nums.Length;
+
+            return QuickSelct(nums, 0, n - 1, (n - 1) / 2);
         }
 
         private int QuickSelct(int[] nums, int start, int end, int k) {
             if (start >= end) {
-                return nums[k];
+                return nums[start];
             }
 
             int left = start, right = end;
@@ -51,7 +49,6 @@ namespace lintcode
             }
             return nums[k];
         }
-
         private void Swap(int[] nums, int left, int right) {
             int temp = nums[left];
             nums[left] = nums[right];
