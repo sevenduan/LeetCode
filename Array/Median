@@ -5,6 +5,11 @@ using System.Collections.Generic;
 namespace lintcode
 {
     class Solution {
+        private Random rand;
+
+        public Solution() {
+            rand = new Random();
+        }
         /**
          * @param nums: A list of integers
          * @return: An integer denotes the middle number of the array
@@ -16,17 +21,17 @@ namespace lintcode
             
             int n = nums.Length;
 
-            return QuickSelct(nums, 0, n - 1, (n - 1) / 2);
+            return QuickSelect(nums, 0, n - 1, (n - 1) / 2);
         }
 
-        private int QuickSelct(int[] nums, int start, int end, int k) {
-            if (start >= end) {
+        private int QuickSelect(int[] nums, int start, int end, int k) {
+            if (start >= end)
                 return nums[start];
-            }
-
-            int left = start, right = end;
-            int pivot = nums[(start + end) / 2];
             
+            int left = start;
+            int right = end;
+            int random = GetRandom(left, right);
+            int pivot = nums[random];
             while (left <= right) {
                 while (left <= right && nums[left] < pivot) {
                     left++;
@@ -42,13 +47,18 @@ namespace lintcode
             }
 
             if (k <= right) {
-                return QuickSelct(nums, start, right, k);
+                return QuickSelect(nums, start, right, k);
             }
             if (k >= left) {
-                return QuickSelct(nums, left, end, k);
+                return QuickSelect(nums, left, end, k);
             }
             return nums[k];
         }
+
+        private int GetRandom(int min, int max) {
+            return rand.Next(min, max + 1);
+        }
+ 
         private void Swap(int[] nums, int left, int right) {
             int temp = nums[left];
             nums[left] = nums[right];
