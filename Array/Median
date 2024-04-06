@@ -4,62 +4,74 @@ using System.Collections.Generic;
 
 namespace lintcode
 {
-    class Solution {
+    class Solution
+    {
         private Random rand;
 
-        public Solution() {
+        public Solution()
+        {
             rand = new Random();
         }
         /**
          * @param nums: A list of integers
          * @return: An integer denotes the middle number of the array
          */
-        public int Median(int[] nums) {
+        public int Median(int[] nums)
+        {
             // write your code here
             if (nums == null || nums.Length == 0)
                 return 0;
-            
+
             int n = nums.Length;
 
             return QuickSelect(nums, 0, n - 1, (n - 1) / 2);
         }
 
-        private int QuickSelect(int[] nums, int start, int end, int k) {
+        private int QuickSelect(int[] nums, int start, int end, int k)
+        {
             if (start >= end)
                 return nums[start];
-            
+
             int left = start;
             int right = end;
             int random = GetRandom(left, right);
             int pivot = nums[random];
-            while (left <= right) {
-                while (left <= right && nums[left] < pivot) {
+            while (left <= right)
+            {
+                while (left <= right && nums[left] < pivot)
+                {
                     left++;
                 }
-                while (left <= right && nums[right] > pivot) {
+                while (left <= right && nums[right] > pivot)
+                {
                     right--;
                 }
-                if (left <= right) {
+                if (left <= right)
+                {
                     Swap(nums, left, right);
                     left++;
                     right--;
                 }
             }
 
-            if (k <= right) {
+            if (k <= right)
+            {
                 return QuickSelect(nums, start, right, k);
             }
-            if (k >= left) {
+            if (k >= left)
+            {
                 return QuickSelect(nums, left, end, k);
             }
             return nums[k];
         }
 
-        private int GetRandom(int min, int max) {
+        private int GetRandom(int min, int max)
+        {
             return rand.Next(min, max + 1);
         }
- 
-        private void Swap(int[] nums, int left, int right) {
+
+        private void Swap(int[] nums, int left, int right)
+        {
             int temp = nums[left];
             nums[left] = nums[right];
             nums[right] = temp;
