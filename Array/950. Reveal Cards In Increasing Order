@@ -1,0 +1,26 @@
+public class Solution {
+    public int[] DeckRevealedIncreasing(int[] deck) {
+        if (deck == null || deck.Length == 0)
+            return deck;
+                
+        Array.Sort(deck); // nlogn
+        Queue<int> queue = new Queue<int>();
+        Queue<int> indexes = new Queue<int>();
+        for (int i = 0; i < deck.Length; i++) {
+            indexes.Enqueue(i);
+        }
+
+        int[] res = new int[deck.Length];
+        for (int i = 0; i < deck.Length; i++) {
+            int t = indexes.Dequeue();
+            res[t] = deck[i];
+
+            if (indexes.Count > 0) {
+                int next = indexes.Dequeue();
+                indexes.Enqueue(next);
+            }
+        }
+
+        return res;
+    }
+}

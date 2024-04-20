@@ -1,0 +1,29 @@
+public class Solution {
+    public int[][] FindFarmland(int[][] land) {
+        List<int[]> result = new List<int[]>();
+        int n = land.Length;
+        int m = land[0].Length;
+
+        for (int row = 0; row < n; row++) {
+            for (int col = 0; col < m; col++) {
+                // Skip the current cell if it is not land (0), or it's not the top-left corner of a farmland block.
+                if (land[row][col] == 0 || (col > 0 && land[row][col - 1] == 1) || (row > 0 && land[row - 1][col] == 1)) {
+                    continue;
+                }
+                int bottomRow = row;
+                int rightCol = col;
+                while (bottomRow + 1 < n && land[bottomRow + 1][col] == 1) {
+                    bottomRow++;
+                }
+
+                while (rightCol + 1 < m && land[bottomRow][rightCol + 1] == 1) {
+                    rightCol++;
+                }
+
+                result.Add(new int[] {row, col, bottomRow, rightCol});
+            }
+        }
+
+        return result.ToArray();
+    }
+}
