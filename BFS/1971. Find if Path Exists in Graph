@@ -1,0 +1,51 @@
+public class Solution {
+    public bool ValidPath(int n, int[][] edges, int source, int destination) {
+        var graph = BuildGraph(edges);
+        
+        return BFS(graph, n, source, destination);
+    }
+
+    private bool BFS(Dictionary<int, List<int>> graph, int n, int source, int destination) {
+        Queue<int> queue = new Queue<int>();
+        queue.Enqueue(source);
+        bool[] visited = new bool[n];
+        visited[source] = true;
+
+        while (queue.Count > 0) {
+            var current = queue.Dequeue();
+            if (current == destination)
+                return true;
+            
+            if (!graph.ContainsKey(current))
+                return false;
+            
+            var nextNodes = graph[current];
+
+            foreach(var next in nextNodes) {
+                if (visited[next])
+                    continue;
+                
+                queue.Enqueue(next);
+                visited[next] = true;
+            }
+        }
+
+        return false;
+    }
+
+    private Dictionary<int, List<int>> BuildGraph(int[][] edge) {
+        var graph = new Dictionary<int, List<int>>();
+        foreach (var pair in edge) {
+            if (!graph.ContainsKey(pair[0]))
+                graph[pair[0]] = new List<int>();
+
+            if (!graph.ContainsKey(pair[1]))
+                graph[pair[1]] = new List<int>();
+            
+            graph[pair[0]].Add(pair[1]);
+            graph[pair[1]].Add(pair[0]);
+        }
+
+        return graph;
+    }
+}
