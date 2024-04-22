@@ -1,0 +1,51 @@
+public class Solution {
+    public class Pair {
+        public string Code {get; set;}
+        public int Turns {get; set;}
+        public Pair(string code, int turns) {
+            Code = code;
+            Turns = turns;
+        }
+    }
+
+    public int OpenLock(string[] deadends, string target) {        
+        var deadendsSet = new HashSet<string>(deadends);
+        if (deadendsSet.Contains("0000")) return -1;
+
+        return BFS(deadendsSet, target);
+    }
+
+    private int BFS(HashSet<string> deadendsSet, string target) {
+        Queue<Pair> queue = new Queue<Pair>();
+        HashSet<string> visited = new HashSet<string>();
+        queue.Enqueue(new Pair("0000", 0));
+        visited.Add("0000");
+
+        while (queue.Count > 0) {
+            var cur = queue.Dequeue();
+
+            var code = cur.Code;
+            if (code == target)
+                return cur.Turns;
+
+            // find next
+
+
+            for (int i = 0; i < 4; i++) {
+                for (int j = -1; j <= 1; j += 2) {
+                    int newWheel = (code[i] - '0' + j + 10) % 10;
+                    string newCode = code.Substring(0, i) + newWheel + code.Substring(i + 1);
+                    
+                    if (deadendsSet.Contains(newCode) || visited.Contains(newCode))
+                        continue;
+
+                    queue.Enqueue(new Pair(newCode, cur.Turns + 1));
+                    visited.Add(newCode);
+                }
+            }
+        }
+
+        return -1;
+
+    }
+}
