@@ -1,0 +1,71 @@
+public class Solution {
+    public IList<int> FindMinHeightTrees(int n, int[][] edges) {
+        List<int> ans = new List<int>();
+        if (n == 0)
+            return ans;
+
+        if (n == 1) {
+            ans.Add(0);
+            return ans;
+        }
+
+        if (edges == null || edges.Length == 0)
+            return ans;
+        
+        if (edges[0] == null || edges[0].Length == 0)
+            return ans;
+        
+        var (graph, inDegree) = BuildGraph(n, edges);
+        return TopoOrder(n, graph, inDegree);
+    }
+
+    private List<int> TopoOrder(int n, List<int>[] graph, int[] inDegree) {
+        Queue<int> queue = new Queue<int>();
+        List<int> ans = new List<int>();
+
+        for (int i = 0; i < inDegree.Length; i++) {
+            if (inDegree[i] == 1)
+                queue.Enqueue(i);
+        }
+
+        while (n > 2) {
+            int size = queue.Count;
+            n -= size;
+            for (int i = 0; i < size; i++) {
+                var cur = queue.Dequeue();
+                var nextNodes = graph[cur];
+                foreach (var next in nextNodes) {
+                    inDegree[next]--;
+                    if (inDegree[next] == 1)
+                        queue.Enqueue(next);
+                }
+            }
+        }
+
+        while(queue.Count > 0){
+            ans.Add(queue.Dequeue());
+        }
+        return ans;
+    }
+
+    private (List<int>[] graph, int[] inDegree) BuildGraph(int n, int[][] edges) {
+        var graph = new List<int>[n];
+        for (int i = 0; i < n; i++)
+        {
+            graph[i] = new List<int>();
+        }
+
+        var inDegree = new int[n];
+
+        foreach (var edge in edges) {
+            int u = edge[0];
+            int v = edge[1];            
+            graph[u].Add(v);
+            graph[v].Add(u);
+            inDegree[u]++;
+            inDegree[v]++;
+        }
+
+        return (graph, inDegree);
+    }
+}
