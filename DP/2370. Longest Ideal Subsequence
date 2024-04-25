@@ -1,0 +1,33 @@
+public class Solution {
+    public int LongestIdealString(string s, int k) {
+        if (s == null || s.Length == 0)
+            return 0;
+        
+        int n = s.Length;
+        var dp = new int[n];
+        var prev = new int[26];
+        for (int i = 0; i < n; i++){
+            dp[i] = 1;
+        }
+
+        for (int i = 0; i < 26; i++) {
+            prev[i] = -1;
+        }
+
+        for (int i = 0; i < n; i++) {
+            var charToInt = s[i] - 'a';
+            var min = Math.Max(0, charToInt - k);
+            
+            var max = Math.Min(25, charToInt + k);
+            for (int c = min; c <= max; c++) {
+                int j = prev[c];
+                if (j != -1) {
+                    dp[i] = Math.Max(dp[j] + 1, dp[i]);
+                }
+            }
+            prev[charToInt] = i;
+        }
+
+        return dp.Max();
+    }
+}
