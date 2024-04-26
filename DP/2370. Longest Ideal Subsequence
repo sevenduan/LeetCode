@@ -31,3 +31,28 @@ public class Solution {
         return dp.Max();
     }
 }
+
+/////
+public class Solution {
+    public int LongestIdealString(string s, int k) {
+        if (s == null || s.Length == 0)
+            return 0;
+        
+        int n = s.Length;
+        var dp = new int[26];
+
+        for (int i = 0; i < n; i++) {
+            var charToInt = s[i] - 'a';
+            var min = Math.Max(0, charToInt - k);
+            
+            var max = Math.Min(25, charToInt + k);
+            int cur = 0;
+            for (int j = min; j <= max; j++) {
+                cur = Math.Max(dp[j] + 1, cur);
+            }
+            dp[charToInt] = cur;
+        }
+
+        return dp.Max();
+    }
+}
